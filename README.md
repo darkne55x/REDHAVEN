@@ -140,7 +140,7 @@ docker build -t redhaven:latest .
 ```bash
 docker run --rm -v $(pwd)/results:/results \
   -e BLIND_XSS_CALLBACK="xxx.interact.sh" \
-  redhaven:1.4.2 -d target.com -m 42
+  redhaven:1.0.3 -d target.com -m 42
 ```
 
 ---
