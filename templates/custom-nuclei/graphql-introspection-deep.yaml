@@ -1,0 +1,53 @@
+id: graphql-introspection-deep
+
+info:
+  name: GraphQL Deep Introspection & Schema Extraction
+  author: REDHAVEN
+  severity: info
+  description: |
+    Advanced GraphQL introspection that extracts:
+    - Full schema including hidden types
+    - Mutations and their arguments
+    - Subscriptions
+    - Custom directives
+  tags: graphql,introspection,custom
+  
+http:
+  - raw:
+      - |
+        POST {{Path}} HTTP/1.1
+        Host: {{Hostname}}
+        Content-Type: application/json
+        
+        {"query":"{\n  __schema {\n    queryType { name }\n    mutationType { name }\n    subscriptionType { name }\n    types {\n      ...FullType\n    }\n    directives {\n      name\n      description\n      locations\n      args {\n        ...InputValue\n      }\n    }\n  }\n}\n\nfragment FullType on __Type {\n  kind\n  name\n  description\n  fields(includeDeprecated: true) {\n    name\n    description\n    args {\n      ...InputValue\n    }\n    type {\n      ...TypeRef\n    }\n    isDeprecated\n    deprecationReason\n  }\n  inputFields {\n    ...InputValue\n  }\n  interfaces {\n    ...TypeRef\n  }\n  enumValues(includeDeprecated: true) {\n    name\n    description\n    isDeprecated\n    deprecationReason\n  }\n  possibleTypes {\n    ...TypeRef\n  }\n}\n\nfragment InputValue on __InputValue {\n  name\n  description\n  type { ...TypeRef }\n  defaultValue\n}\n\nfragment TypeRef on __Type {\n  kind\n  name\n  ofType {\n    kind\n    name\n    ofType {\n      kind\n      name\n      ofType {\n        kind\n        name\n        ofType {\n          kind\n          name\n          ofType {\n            kind\n            name\n            ofType {\n              kind\n              name\n              ofType {\n                kind\n                name\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n}"}
+    
+    paths:
+      - "{{BaseURL}}/graphql"
+      - "{{BaseURL}}/api/graphql"
+      - "{{BaseURL}}/v1/graphql"
+      - "{{BaseURL}}/query"
+    
+    matchers-condition: and
+    matchers:
+      - type: word
+        part: body
+        words:
+          - "__schema"
+          - "queryType"
+        condition: and
+      
+      - type: word
+        part: header
+        words:
+          - "application/json"
+      
+      - type: status
+        status:
+          - 200
+    
+    extractors:
+      - type: json
+        part: body
+        json:
+          - '.data.__schema.mutationType.name'
+          - '.data.__schema.types[].name'

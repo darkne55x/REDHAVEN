@@ -1,0 +1,19 @@
+# REDHAVEN AI Provider Configuration
+# Rename this file to provider-config.yaml before running
+
+
+binaryedge: []
+censys: []
+certspotter: []
+chaos: []
+dnsdb: []
+github:
+  - "ghp_YOUR_API"
+intelx: []
+shodan:
+  - "YOUR_API"
+
+gemini:
+api_key: "YOUR_API"
+model: "gemini-pro"
+temperature: 0.7

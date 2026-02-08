@@ -1,0 +1,18 @@
+REDHAVEN v1.0.3 Community Edition
+Release Date: 2026-02-07
+
+Critical Features Added:
+✅ CVE Auto-Matching Engine
+✅ GitHub Deep Recon with TruffleHog
+✅ S3 Bucket Bruteforce (AWS/Azure/GCP)
+✅ CI/CD Configuration Discovery
+
+
+Build Instructions:
+  docker build -t darkne55-redhaven:latest .
+
+Dependencies Added:
+  - TruffleHog v3.87.1
+  - jq (already included)
+
+For detailed changes, see CHANGELOG.md
