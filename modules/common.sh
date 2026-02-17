@@ -55,7 +55,7 @@ trap cleanup EXIT INT TERM
 
 # --- UTILIDADES DE LOGGING (COHERENTE) ---
 log_phase() {
-    echo -e "\n${BOLD}${PRIMARY}▶ PHASE:${RESET} ${BOLD}${PRIMARY} $1 ${RESET}"
+    echo -e "\n${BOLD}${PRIMARY}▶ PHASE [${TARGET}]:${RESET} ${BOLD}${PRIMARY} $1 ${RESET}"
 }
 
 log_step() {
