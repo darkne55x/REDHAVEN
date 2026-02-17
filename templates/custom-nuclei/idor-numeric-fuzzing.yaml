@@ -1,0 +1,62 @@
+id: idor-numeric-fuzzing
+
+info:
+  name: Advanced IDOR Numeric Parameter Fuzzing
+  author: REDHAVEN
+  severity: high
+  description: |
+    Detects potential IDOR vulnerabilities by fuzzing numeric parameters.
+    Tests common patterns: id=1, uid=123, account=456, etc.
+  tags: idor,fuzzing,custom
+  
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}"
+    
+    payloads:
+      ids:
+        - 1
+        - 2
+        - 100
+        - 999
+        - 1000
+        - 9999
+    
+    # Fuzz common numeric parameter names
+    fuzzing:
+      - part: query
+        type: replace
+        mode: single
+        fuzz:
+          id: "{{ids}}"
+          uid: "{{ids}}"
+          user_id: "{{ids}}"
+          account: "{{ids}}"
+          order_id: "{{ids}}"
+          invoice: "{{ids}}"
+          customer_id: "{{ids}}"
+    
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+      
+      - type: word
+        part: body
+        words:
+          - "email"
+          - "phone"
+          - "address"
+          - "balance"
+          - "credit"
+        condition: or
+    
+    extractors:
+      - type: regex
+        part: body
+        regex:
+          - '"email":"([^"]+)"'
+          - '"phone":"([^"]+)"'
+          - '"id":([0-9]+)'
