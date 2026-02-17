@@ -14,7 +14,7 @@
   - **OOB Integration**: Global `OOB_DOMAIN` support for blind SSRF, blind XSS, and blind XXE.
   - **Stability**: Fixed a systemic subshell bug that caused `finding_count` to be lost in 4 modules (Logic, BOLA, Rate Limit, OAuth).
   - **Safety**: Fixed `cd` context corruption bug in `bypass403.sh` and added `check_dependency` guards to missing modules.
-  - **UI/UX**: Removed confusing numerical phase prefixes from execution logs (retaining them only in menus).
+  - **UI/UX**: Removed confusing numerical phase prefixes and styled execution headers in **Bold Red** for better visibility.
 - **Module Orchestrator**: Lightweight `scanner.sh` that sources modules dynamically.
 - **Python Cleanup**: Removed 8 redundant Python scripts, keeping 9 unique engines for specialized tasks.
 - **Smart Symlinking**: Dockerfile now automatically symlinks Python modules to `/usr/local/bin`.
