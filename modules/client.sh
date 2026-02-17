@@ -7,7 +7,7 @@
 run_client_fuzzing() {
     if check_dependency "$OUT_DIR/vulns/open_redirect.txt" "Client-Side Fuzzing"; then return; fi
     
-    log_phase "18: CLIENT-SIDE FUZZING v2 (DOM SECURITY SUITE)"
+    log_phase "CLIENT-SIDE FUZZING v2 (DOM SECURITY SUITE)"
     
     mkdir -p "$OUT_DIR/.temp" "$OUT_DIR/vulns"
     : > "$OUT_DIR/vulns/client_side_findings.txt"

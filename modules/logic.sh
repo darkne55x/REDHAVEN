@@ -6,7 +6,7 @@
 # 16. LOGIC FLAWS v2 (Price Manipulation + Method Tampering + Param Pollution)
 run_logic_flaws() {
     if check_dependency "$OUT_DIR/vulns/logic.txt" "Logic Flaws"; then return; fi
-    log_phase "16: BUSINESS LOGIC FLAWS v2 (SMART ANALYSIS)"
+    log_phase "BUSINESS LOGIC FLAWS v2 (SMART ANALYSIS)"
     
     mkdir -p "$OUT_DIR/.temp" "$OUT_DIR/vulns"
     : > "$OUT_DIR/vulns/logic.txt"

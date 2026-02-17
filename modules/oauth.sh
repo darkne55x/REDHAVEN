@@ -6,7 +6,7 @@
 # 21. OAUTH ANALYSIS v2 (Discovery + OIDC + Redirect Manipulation)
 run_oauth_analysis() {
     if check_dependency "$OUT_DIR/vulns/oauth.txt" "OAuth Analysis"; then return; fi
-    log_phase "21: OAUTH & OIDC AUDIT v2 (DISCOVERY + ATTACK)"
+    log_phase "OAUTH & OIDC AUDIT v2 (DISCOVERY + ATTACK)"
     
     mkdir -p "$OUT_DIR/.temp" "$OUT_DIR/vulns"
     : > "$OUT_DIR/vulns/oauth.txt"

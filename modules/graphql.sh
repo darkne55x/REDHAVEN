@@ -6,7 +6,7 @@
 # 19. GRAPHQL DEEP v2 (Discovery + Introspection + Mutation Analysis)
 run_graphql_deep() {
     if check_dependency "$OUT_DIR/vulns/graphql.txt" "GraphQL Deep"; then return; fi
-    log_phase "19: GRAPHQL DEEP AUDIT v2 (INTROSPECTION + MUTATION ANALYSIS)"
+    log_phase "GRAPHQL DEEP AUDIT v2 (INTROSPECTION + MUTATION ANALYSIS)"
     
     mkdir -p "$OUT_DIR/.temp" "$OUT_DIR/vulns"
     : > "$OUT_DIR/vulns/graphql.txt"

@@ -7,7 +7,7 @@
 run_crlf_scan() {
     if check_dependency "$OUT_DIR/vulns/crlf.txt" "CRLF Injection"; then return; fi
     
-    log_phase "11: CRLF INJECTION (NINJA MODE)"
+    log_phase "CRLF INJECTION (NINJA MODE)"
     
     if [ ! -s "$OUT_DIR/endpoints/clean_urls.txt" ]; then
         log_warn "No clean URLs found for CRLF testing. Skipping phase."

@@ -6,7 +6,7 @@
 # 36. HTTP REQUEST SMUGGLING v2 (CL.TE + TE.CL + Desync Detection)
 run_http_smuggling() {
     if check_dependency "$OUT_DIR/vulns/http_smuggling.txt" "HTTP Smuggling"; then return; fi
-    log_phase "36: HTTP REQUEST SMUGGLING v2 (DESYNC ANALYSIS)"
+    log_phase "HTTP REQUEST SMUGGLING v2 (DESYNC ANALYSIS)"
     
     mkdir -p "$OUT_DIR/.temp" "$OUT_DIR/vulns"
     : > "$OUT_DIR/vulns/http_smuggling.txt"

@@ -6,7 +6,7 @@
 # 20. API RATE LIMIT v2 (Discovery + Rapid-Fire + Bypass Techniques)
 run_api_limit_bypass() {
     if check_dependency "$OUT_DIR/vulns/ratelimit.txt" "API Rate Limit"; then return; fi
-    log_phase "20: API RATE LIMIT BYPASS v2 (DISCOVERY + ATTACK)"
+    log_phase "API RATE LIMIT BYPASS v2 (DISCOVERY + ATTACK)"
     
     mkdir -p "$OUT_DIR/.temp" "$OUT_DIR/vulns"
     : > "$OUT_DIR/vulns/ratelimit.txt"

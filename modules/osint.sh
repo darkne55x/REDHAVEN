@@ -6,7 +6,7 @@
 # 45. OSINT INTELLIGENCE RECON (V2.0 — Smart Flag: --osint)
 run_osint_recon() {
     if check_dependency "$OUT_DIR/osint/osint_google_dorks.txt" "OSINT Recon"; then return; fi
-    log_phase "45: OSINT INTELLIGENCE RECON"
+    log_phase "OSINT INTELLIGENCE RECON"
     
     mkdir -p "$OUT_DIR/osint"
     
@@ -42,7 +42,7 @@ run_osint_recon() {
 }
 
 run_cloud_enum() {
-    log_phase "46: CLOUD BUCKET ENUMERATION"
+    log_phase "CLOUD BUCKET ENUMERATION"
     
     if check_dependency "$OUT_DIR/osint/cloud_buckets.txt" "Cloud Enum"; then return; fi
     
@@ -82,7 +82,7 @@ run_cloud_enum() {
 # CORRELACIÓN FINAL
 run_correlation() {
     if check_dependency "$OUT_DIR/reports/correlated_findings.txt" "Data Correlation"; then return; fi
-    log_phase "90: DATA CORRELATION (SMART)"
+    log_phase "DATA CORRELATION (SMART)"
     if [ -f "/usr/local/bin/correlator" ]; then
         python3 /usr/local/bin/correlator "$OUT_DIR" > "$OUT_DIR/reports/correlated_findings.txt" || true
     fi
@@ -90,7 +90,7 @@ run_correlation() {
 
 # REPORTING
 run_reporting() {
-    log_phase "99: FINAL REPORTING"
+    log_phase "FINAL REPORTING"
     local report="$OUT_DIR/reports/final_summary.txt"
     echo "====================================================" > "$report"
     echo " REDHAVEN FRAMEWORK SUMMARY - $TARGET " >> "$report"

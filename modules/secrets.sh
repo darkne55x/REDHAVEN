@@ -6,7 +6,7 @@
 # 9. SECRETS HUNTER v2 (Smart Secrets + JSLuice + Gitleaks)
 run_secrets_hunter() {
     if check_dependency "$OUT_DIR/secrets/smart_secrets.txt" "Secrets Hunter"; then return; fi
-    log_phase "09: SECRETS & LEAKED KEYS v2 (INTELLIGENT DEEP ANALYSIS)"
+    log_phase "SECRETS & LEAKED KEYS v2 (INTELLIGENT DEEP ANALYSIS)"
     
     mkdir -p "$OUT_DIR/secrets" "$OUT_DIR/.temp/js_download"
     

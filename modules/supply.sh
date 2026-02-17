@@ -7,7 +7,7 @@
 run_dephunter() {
     if check_dependency "$OUT_DIR/vulns/supply_chain.txt" "Supply Chain"; then return; fi
     
-    log_phase "12: SUPPLY CHAIN & REPO EXPOSURE (ROOTS ONLY)"
+    log_phase "SUPPLY CHAIN & REPO EXPOSURE (ROOTS ONLY)"
     
     # 0. Validación
     if [ ! -s "$OUT_DIR/recon/urls.txt" ] && [ ! -s "$OUT_DIR/endpoints/alive_urls.txt" ]; then

@@ -6,7 +6,7 @@
 # 25. RACE CONDITIONS v2 (Burst Test + Response Analysis + Timing)
 run_race_conditions() {
      if check_dependency "$OUT_DIR/vulns/race_conditions.txt" "Race Conditions"; then return; fi
-     log_phase "25: RACE CONDITIONS v2 (CONCURRENT BURST ANALYSIS)"
+     log_phase "RACE CONDITIONS v2 (CONCURRENT BURST ANALYSIS)"
      
      mkdir -p "$OUT_DIR/.temp" "$OUT_DIR/vulns"
      : > "$OUT_DIR/vulns/race_conditions.txt"

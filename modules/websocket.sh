@@ -6,7 +6,7 @@
 # 26. WEBSOCKET ANALYSIS v2 (Discovery + Handshake + Origin + CSWSH)
 run_websocket_analysis() {
     if check_dependency "$OUT_DIR/vulns/websocket_findings.txt" "WebSocket Analysis"; then return; fi
-    log_phase "26: WEBSOCKET ANALYSIS v2 (SECURITY ASSESSMENT)"
+    log_phase "WEBSOCKET ANALYSIS v2 (SECURITY ASSESSMENT)"
     
     mkdir -p "$OUT_DIR/.temp" "$OUT_DIR/vulns"
     : > "$OUT_DIR/vulns/websocket_findings.txt"

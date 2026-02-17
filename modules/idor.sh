@@ -7,7 +7,7 @@
 run_idor_hunter() {
     if check_dependency "$OUT_DIR/vulns/idor_candidates.txt" "IDOR Hunter"; then return; fi
     
-    log_phase "07: IDOR & AUTH BYPASS HUNTER (INTELLIGENT)"
+    log_phase "IDOR & AUTH BYPASS HUNTER (INTELLIGENT)"
     
     # Non-fatal check
     if [ ! -s "$OUT_DIR/endpoints/clean_urls.txt" ]; then

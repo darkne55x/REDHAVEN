@@ -5,7 +5,7 @@
 # === ENDPOINT DISCOVERY & INFRASTRUCTURE ===
 # 4. METADATA HUNTER
 run_metadata_hunter() {
-    log_phase "04: METADATA & SENSITIVE FILES"
+    log_phase "METADATA & SENSITIVE FILES"
     
     if [ ! -s "$OUT_DIR/endpoints/alive_urls.txt" ]; then
         log_warn "No alive URLs found for metadata extraction. Skipping phase."
@@ -80,7 +80,7 @@ run_metadata_hunter() {
 # 5. PARAM MINING
 run_param_mining() {
     if check_dependency "$OUT_DIR/endpoints/params_only.txt" "Param Mining"; then return; fi
-    log_phase "05: HYBRID PARAM MINING"
+    log_phase "HYBRID PARAM MINING"
     
     # Non-fatal check
     if [ ! -s "$OUT_DIR/endpoints/alive_urls.txt" ]; then
@@ -133,7 +133,7 @@ run_infrastructure_scan()
 {
     if check_dependency "$OUT_DIR/vulns/infrastructure_findings.txt" "Infrastructure Scan"; then return; fi
     
-    log_phase "06: INFRASTRUCTURE & CLOUD SCAN"
+    log_phase "INFRASTRUCTURE & CLOUD SCAN"
     
     if [ ! -s "$OUT_DIR/recon/urls.txt" ]; then
         log_warn "No URLs found for infrastructure testing. Skipping phase."

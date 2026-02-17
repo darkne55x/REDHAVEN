@@ -6,7 +6,7 @@
 # 8. XSS ENGINE v2
 run_xss_engine() {
     if check_dependency "$OUT_DIR/vulns/xss.txt" "XSS Engine"; then return; fi
-    log_phase "08: XSS INJECTION ENGINE v2 (REFLECTION + DOM + WAF-EVASION)"
+    log_phase "XSS INJECTION ENGINE v2 (REFLECTION + DOM + WAF-EVASION)"
     
     # Non-fatal check for parameters
     if [ ! -s "$OUT_DIR/endpoints/params_only.txt" ]; then

@@ -7,7 +7,7 @@
 run_subdomain_takeover() {
     if check_dependency "$OUT_DIR/vulns/subdomain_takeover.txt" "Subdomain Takeover"; then return; fi
     
-    log_phase "22: SUBDOMAIN TAKEOVER DETECTION"
+    log_phase "SUBDOMAIN TAKEOVER DETECTION"
     
     # AUTO-DEPENDENCY: Si no existe subs.txt, ejecutar recon pasivo
     if [ ! -s "$OUT_DIR/.temp/subs.txt" ]; then
@@ -36,7 +36,7 @@ run_subdomain_takeover() {
 run_apk_analysis() {
     if check_dependency "$OUT_DIR/reports/mobsf_apk.json" "APK Analysis"; then return; fi
     
-    log_phase "23: APK SECURITY ANALYSIS"
+    log_phase "APK SECURITY ANALYSIS"
     
     if [ -z "$APK_FILE" ]; then
         log_warn "No APK file specified. Use -a flag to provide an APK."
@@ -62,7 +62,7 @@ run_apk_analysis() {
 run_ios_analysis() {
     if check_dependency "$OUT_DIR/reports/mobsf_ios.json" "iOS Analysis"; then return; fi
     
-    log_phase "24: iOS APP ANALYSIS"
+    log_phase "iOS APP ANALYSIS"
     
     if [ -z "$IPA_FILE" ]; then
         log_warn "No IPA file specified. Use -i flag to provide an IPA."
@@ -93,7 +93,7 @@ run_ios_analysis() {
 run_backup_discovery() {
     if check_dependency "$OUT_DIR/vulns/backup_files.txt" "Backup Discovery"; then return; fi
     
-    log_phase "25: BACKUP FILE DISCOVERY"
+    log_phase "BACKUP FILE DISCOVERY"
     
     # AUTO-DEPENDENCY: Si no existe clean_urls.txt, ejecutar recon activo + limpieza
     if [ ! -s "$OUT_DIR/endpoints/clean_urls.txt" ]; then

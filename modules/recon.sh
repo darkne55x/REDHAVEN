@@ -4,7 +4,7 @@
 
 # === RECONNAISSANCE ===
 detect_stack() {
-    log_phase "03: TECHNOLOGY DETECTION (DECISION MATRIX)"
+    log_phase "TECHNOLOGY DETECTION (DECISION MATRIX)"
     
     if [ ! -s "$OUT_DIR/reports/web_overview.txt" ]; then
         log_warn "No visual recon data found. Skipping technology detection."
@@ -301,7 +301,7 @@ run_recon_active() {
     run_port_scan
     
     if check_dependency "$OUT_DIR/endpoints/alive_urls.txt" "Recon Activo"; then return; fi
-    log_phase "02: HYBRID URL DISCOVERY (KATANA & URLFINDER)"
+    log_phase "HYBRID URL DISCOVERY (KATANA & URLFINDER)"
     
     mkdir -p "$OUT_DIR/.temp"
     
@@ -406,7 +406,7 @@ run_visual_recon() {
     # Verificamos si ya existe el reporte
     if check_dependency "$OUT_DIR/reports/web_overview.txt" "Visual Recon (Lite)"; then return; fi
     
-    log_phase "03: RECON METADATA & TITLES"
+    log_phase "RECON METADATA & TITLES"
     
     if [ ! -s "$OUT_DIR/recon/urls.txt" ]; then
         log_warn "No URLs from passive recon. Skipping visual reconnaissance."
@@ -440,7 +440,7 @@ run_visual_recon() {
 
 # 39. HUNTER'S TOOLKIT (Phase 2C Extension)
 run_hunter_toolkit() {
-    log_phase "39: HUNTER'S TOOLKIT (UNICODE/EMAIL/CLICKJACKING)"
+    log_phase "HUNTER'S TOOLKIT (UNICODE/EMAIL/CLICKJACKING)"
     
     # 1. Clickjacking & Uploads on Base Domain
     python3 /usr/local/bin/hunter_toolkit -u "https://$TARGET" || true
@@ -456,8 +456,8 @@ run_hunter_toolkit() {
 
 # 40. ALTERNATIVE RECON (NELUX1 INTEGRATION)
 run_alternate_recon() {
-    if check_dependency "$OUT_DIR/recon/nelux1_combined.txt" "Alternate Recon"; then return; fi
-    log_phase "44: ALTERNATIVE RECON (NELUX1)"
+    if check_dependency "$OUT_DIR/recon/nelux1_final.txt" "Alternate Recon"; then return; fi
+    log_phase "ALTERNATIVE RECON (NELUX1)"
     log_step "[*] Based on Alternative Recon tools by Nelux1"
     
     local domain="$TARGET"

@@ -7,7 +7,7 @@
 run_403_bypass() {
     if check_dependency "$OUT_DIR/vulns/bypass_403.txt" "403 Bypass"; then return; fi
     
-    log_phase "14: 403/401 ACCESS BYPASS (NOMORE403)"
+    log_phase "403/401 ACCESS BYPASS (NOMORE403)"
     
     # Extraemos URLs únicas con errores de acceso
     grep -E "403|401" "$OUT_DIR/endpoints/alive_urls.txt" | awk '{print $1}' | sort -u > "$OUT_DIR/.temp/forbidden_urls.txt" || true

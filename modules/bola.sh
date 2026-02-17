@@ -6,7 +6,7 @@
 # 28. BOLA/BFLA API TESTING v2 (ID Manipulation + Method Auth + Horizontal Escalation)
 run_bola_bfla() {
     if check_dependency "$OUT_DIR/vulns/bola_bfla.txt" "BOLA/BFLA Testing"; then return; fi
-    log_phase "28: BOLA/BFLA v2 (API AUTHORIZATION ANALYSIS)"
+    log_phase "BOLA/BFLA v2 (API AUTHORIZATION ANALYSIS)"
     
     mkdir -p "$OUT_DIR/.temp" "$OUT_DIR/vulns"
     : > "$OUT_DIR/vulns/bola_bfla.txt"

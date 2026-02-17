@@ -6,7 +6,7 @@
 # 15. JWT ATTACK v2 (Full Analysis + Attack Suite)
 run_jwt_suite() {
     if check_dependency "$OUT_DIR/vulns/jwt_findings.txt" "JWT Attack"; then return; fi
-    log_phase "15: JWT SECURITY ANALYSIS v2 (DECODE + ATTACK)"
+    log_phase "JWT SECURITY ANALYSIS v2 (DECODE + ATTACK)"
     
     mkdir -p "$OUT_DIR/.temp" "$OUT_DIR/vulns"
     : > "$OUT_DIR/.temp/jwts.txt"

@@ -6,7 +6,7 @@
 # 38. CACHE POISONING v2 (Unkeyed Headers + WCD + CPDoS)
 run_cache_poisoning() {
     if check_dependency "$OUT_DIR/vulns/cache_poisoning.txt" "Cache Poisoning"; then return; fi
-    log_phase "38: CACHE POISONING v2 (UNKEYED HEADERS + WCD + CPDoS)"
+    log_phase "CACHE POISONING v2 (UNKEYED HEADERS + WCD + CPDoS)"
     
     mkdir -p "$OUT_DIR/.temp" "$OUT_DIR/vulns"
     : > "$OUT_DIR/vulns/cache_poisoning.txt"

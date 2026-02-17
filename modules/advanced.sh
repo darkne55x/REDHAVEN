@@ -6,7 +6,7 @@
 # 33. POSTMESSAGE SECURITY ANALYZER (Phase 2B)
 run_postmessage_analyzer() {
     if check_dependency "$OUT_DIR/vulns/postmessage_findings.txt" "PostMessage Analyzer"; then return; fi
-    log_phase "33: POSTMESSAGE SECURITY ANALYSIS"
+    log_phase "POSTMESSAGE SECURITY ANALYSIS"
     
     # Check if JS files have been downloaded
     if [ ! -d "$OUT_DIR/.temp/js_download" ] || [ -z "$(ls -A $OUT_DIR/.temp/js_download 2>/dev/null)" ]; then
@@ -32,7 +32,7 @@ run_postmessage_analyzer() {
 
 # 34. BLIND XSS HUNTER (Phase 2B - Requires Callback Server)
 run_blind_xss() {
-    log_phase "34: BLIND XSS HUNTER"
+    log_phase "BLIND XSS HUNTER"
     
     # Check for callback server configuration
     local callback_domain=""
@@ -69,7 +69,7 @@ run_blind_xss() {
 
 # 35. 2FA BYPASS TESTER (Phase 2B - Requires Manual Configuration)
 run_twofa_bypass() {
-    log_phase "35: 2FA/MFA BYPASS TESTING"
+    log_phase "2FA/MFA BYPASS TESTING"
     
     # Check if 2FA endpoints are configured
     if [ -z "${TFA_VERIFY_URL:-}" ]; then

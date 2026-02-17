@@ -6,7 +6,7 @@
 # 37. CORS MISCONFIGURATION v2 (Multi-Origin + Credential Check + Bypass)
 run_cors_testing() {
     if check_dependency "$OUT_DIR/vulns/cors_misconfigs.txt" "CORS Testing"; then return; fi
-    log_phase "37: CORS MISCONFIGURATION v2 (MULTI-ORIGIN ANALYSIS)"
+    log_phase "CORS MISCONFIGURATION v2 (MULTI-ORIGIN ANALYSIS)"
     
     mkdir -p "$OUT_DIR/.temp" "$OUT_DIR/vulns"
     : > "$OUT_DIR/vulns/cors_misconfigs.txt"

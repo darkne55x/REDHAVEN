@@ -6,7 +6,7 @@
 # 27. SWAGGER/OPENAPI DISCOVERY v2 (Multi-Path Probe + Spec Parser + Endpoint Extraction)
 run_swagger_discovery() {
     if check_dependency "$OUT_DIR/reports/swagger_analysis.txt" "Swagger Discovery"; then return; fi
-    log_phase "27: SWAGGER/OPENAPI DISCOVERY v2 (SPEC ANALYSIS)"
+    log_phase "SWAGGER/OPENAPI DISCOVERY v2 (SPEC ANALYSIS)"
     
     mkdir -p "$OUT_DIR/.temp" "$OUT_DIR/reports" "$OUT_DIR/endpoints"
     : > "$OUT_DIR/reports/swagger_analysis.txt"

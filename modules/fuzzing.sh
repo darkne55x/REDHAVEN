@@ -6,7 +6,7 @@
 # 17. UNIFIED STRATEGIC FUZZING (Phase 2B - Orchestrator)
 run_deep_fuzzing() {
     if check_dependency "$OUT_DIR/recon/deep_fuzzing.txt" "Deep Fuzzing"; then return; fi
-    log_phase "17: UNIFIED STRATEGIC FUZZING"
+    log_phase "UNIFIED STRATEGIC FUZZING"
     
     # Aseguramos que el stack esté detectado
     detect_stack

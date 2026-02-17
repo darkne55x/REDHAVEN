@@ -6,7 +6,7 @@
 # 10. SSRF STORM v2 (Smart Targeting + Multi-Payload + Response Analysis)
 run_ssrf_storm() {
     if check_dependency "$OUT_DIR/vulns/ssrf.txt" "SSRF Storm"; then return; fi
-    log_phase "10: SSRF STORM v2 (SMART TARGETING + RESPONSE ANALYSIS)"
+    log_phase "SSRF STORM v2 (SMART TARGETING + RESPONSE ANALYSIS)"
     
     mkdir -p "$OUT_DIR/.temp" "$OUT_DIR/vulns"
     : > "$OUT_DIR/vulns/ssrf.txt"
