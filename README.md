@@ -14,6 +14,7 @@ Version 1.2.0 is a fundamental architectural overhaul and a massive performance 
 
 ### ⚡ Performance & Stability
 
+- **Smart Caching**: Intelligent dependency checks prevent redundant re-scans (Amass, Subfinder), saving 10-15m on iterative runs.
 - **Parallel Execution**: Rewrote core engines (SSRF) to use `parallel` for 20x speed gains.
 - **Single-Pass Analysis**: Optimized Intelligence scoring from expensive sequential loops to single-pass `awk` processing.
 - **Subshell Bug Resolution**: Fixed a critical systemic bug that caused missing finding counts in Logic, BOLA, Rate Limit, and OAuth modules.

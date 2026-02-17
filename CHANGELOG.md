@@ -9,7 +9,7 @@
 - **Modular Architecture**: Ported 4000+ lines of monolithic bash into **28 independent modules** in `/modules/`.
 - **Elite Upgrades (16 Rewrites)**: Complete native bash rewrites for 16 core engines.
 - **Audit Resolution (v1.2.0-hotfix)**:
-  - **Performance**: Parallelized SSRF engine (20x faster) and optimized Intel scoring loop (single-pass awk).
+  - **Performance**: Eliminated massive 10-15m delay per re-run (Amass fix), removed redundant Subfinder calls, parallelized SSRF (20x faster), and optimized Intel scoring.
   - **New Vectors**: Added XXE probing, JWT kid/jku/x5u injection, and Azure/DigitalOcean IMDS support.
   - **OOB Integration**: Global `OOB_DOMAIN` support for blind SSRF, blind XSS, and blind XXE.
   - **Stability**: Fixed a systemic subshell bug that caused `finding_count` to be lost in 4 modules (Logic, BOLA, Rate Limit, OAuth).
