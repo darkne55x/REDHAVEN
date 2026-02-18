@@ -53,6 +53,23 @@ cleanup() {
 }
 trap cleanup EXIT INT TERM
 
+# --- ERROR HANDLING & LOGGING (PRO) ---
+LOG_FILE="${OUT_DIR:-.}/scan.log"
+
+check_exit_code() {
+    local status=$?
+    local command_name="$1"
+    
+    if [ $status -ne 0 ]; then
+        echo -e "${ERROR}[✘] ERROR:${RESET} $command_name failed with exit code $status"
+        echo "[$(date '+%Y-%m-%d %H:%M:%S')] ERROR: $command_name failed (Exit: $status)" >> "$LOG_FILE"
+        return $status
+    else
+        echo "[$(date '+%Y-%m-%d %H:%M:%S')] SUCCESS: $command_name completed" >> "$LOG_FILE"
+        return 0
+    fi
+}
+
 # --- UTILIDADES DE LOGGING (COHERENTE) ---
 log_phase() {
     echo -e "\n${BOLD}${PRIMARY}▶ PHASE [${TARGET}]:${RESET} ${BOLD}${PRIMARY} $1 ${RESET}"
@@ -84,11 +101,52 @@ log_fatal() {
 }
 
 # --- HTTPX BINARY RESOLUTION (CENTRALIZED) ---
+# --- HTTPX BINARY RESOLUTION (ROBUST) ---
 resolve_httpx_bin() {
-    if command -v httpx-pd >/dev/null; then HTTPX_BIN="httpx-pd"
-    else HTTPX_BIN=$(find /root/go/bin /usr/local/bin -name httpx -type f 2>/dev/null | grep -v "python" | head -n 1)
+    # 1. Check for ProjectDiscovery's official binary name first
+    if command -v httpx-pd >/dev/null; then 
+        HTTPX_BIN="httpx-pd"
+        log_success "Using binary: httpx-pd (Found in PATH)"
+    # 2. Check for standard name
+    elif command -v httpx >/dev/null; then
+        local httpx_path=$(command -v httpx)
+        
+        # Quick check if it's the python tool
+        local version_out=$(httpx -version 2>&1)
+        
+        if echo "$version_out" | grep -qi "projectdiscovery"; then
+            HTTPX_BIN="httpx"
+            log_success "Using binary: httpx (ProjectDiscovery Verified)"
+        else
+            log_warn "Standard 'httpx' is likely Python library. Ignoring."
+            
+            # 3. Last resort: Find in common Go paths
+            # Explicitly include the path where Dockerfile installs it: /usr/local/bin/httpx-pd
+            if [ -f "/usr/local/bin/httpx-pd" ]; then
+                HTTPX_BIN="/usr/local/bin/httpx-pd"
+            elif [ -f "/root/go/bin/httpx" ]; then
+                HTTPX_BIN="/root/go/bin/httpx"
+            else
+                HTTPX_BIN=$(find /root/go/bin /usr/local/bin /home/*/go/bin -name httpx -type f 2>/dev/null | grep -v "python" | head -n 1)
+            fi
+        fi
+    else
+         if [ -f "/usr/local/bin/httpx-pd" ]; then
+            HTTPX_BIN="/usr/local/bin/httpx-pd"
+         fi
     fi
-    [ -z "$HTTPX_BIN" ] && HTTPX_BIN="/root/go/bin/httpx"
+    
+    # Fallback if still empty
+    if [ -z "$HTTPX_BIN" ]; then
+         HTTPX_BIN=$(find /root/go/bin /usr/local/bin /home/*/go/bin -name httpx -type f 2>/dev/null | grep -v "python" | head -n 1)
+    fi
+
+    if [ -x "$HTTPX_BIN" ] || command -v "$HTTPX_BIN" >/dev/null; then
+         log_success "Resolved httpx binary: $HTTPX_BIN"
+    else
+         log_err "CRITICAL: httpx (ProjectDiscovery) binary not found. Recon will fail."
+         HTTPX_BIN="false" 
+    fi
     export HTTPX_BIN
 }
 resolve_httpx_bin
@@ -169,6 +227,6 @@ verify_tools() {
 
 show_banner() {
     clear
-    echo -e "${RED}    REDHAVEN v1.2.0 - COMMUNITY EDITION    ${RESET}"
+    echo -e "${RED}    REDHAVEN v1.2.1 - COMMUNITY EDITION    ${RESET}"
     echo -e "${DIM}Restoring complete logic for /results...${RESET}\n"
 }

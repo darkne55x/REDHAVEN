@@ -164,7 +164,7 @@ run_ssrf_storm() {
     grep -iE "(redirect|url|next|dest|return|checkout_url|continue)=" "$OUT_DIR/.temp/ssrf_targets.txt" | \
         head -n 50 | \
         qsreplace "https://httpbin.org/get" 2>/dev/null | \
-        httpx -silent -status-code -location -mc 301,302,307 -threads 30 2>/dev/null | \
+        $HTTPX_BIN -silent -status-code -location -mc 301,302,307 -threads 30 2>/dev/null | \
         grep -i "httpbin.org" >> "$OUT_DIR/vulns/ssrf.txt" 2>/dev/null || true
     
     # ── STEP 4: NUCLEI SUPPLEMENTARY ──

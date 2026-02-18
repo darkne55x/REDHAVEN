@@ -179,7 +179,9 @@ RUN git clone --depth 1 https://github.com/Tuhinshubhra/CMSeeK.git /tools/cmseek
     ln -sf /tools/cmseek/cmseek.py /usr/local/bin/cmseek
 
 # Cloud Enum - Multi-cloud bucket enumeration
-RUN pip3 install --break-system-packages cloud_enum
+RUN git clone --depth 1 https://github.com/initstring/cloud_enum.git /tools/cloud_enum && \
+    cd /tools/cloud_enum && pip3 install --break-system-packages -r requirements.txt && \
+    ln -sf /tools/cloud_enum/cloud_enum.py /usr/local/bin/cloud_enum
 
 # 6e. Intelligent Fuzzing Tools (Phase 2B)
 # Commix (Command Injection)

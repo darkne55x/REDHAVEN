@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # =======================================================================================
-# REDHAVEN v1.2.0 • Offensive Bug Bounty Framework • Modular Architecture • by darkne55
+# REDHAVEN v1.2.1 • Offensive Bug Bounty Framework • Modular Architecture • by darkne55
 # =======================================================================================
 
 set -euo pipefail
@@ -132,7 +132,7 @@ case "$MODE" in
     14) run_graphql_deep ;;
     15) run_jwt_suite ;;
     16) run_oauth_analysis ;;
-    17) run_ai_hunter ;;
+    # 17) run_ai_hunter ;; # DISABLED UNTIL MODULE RESTORATION
     
     # ========================================================================
     # 20-29: VULNERABILITY HUNTING
@@ -257,7 +257,7 @@ case "$MODE" in
         ;;
 
     85) # RED TEAM ELITE — ALL-IN OFFENSIVE PIPELINE
-        log_phase ">>> MODE 85: RED TEAM ELITE <<<"
+        log_phase ">>> RED TEAM ELITE - ALL IN ONE SCAN <<<"
         
         # Show active Smart Flags
         if [ "$DEEP_MODE" = "true" ]; then log_step "FLAG: --deep (extended payloads, SQLi, SSTI, LFI)"; fi
@@ -338,7 +338,7 @@ case "$MODE" in
         run_blind_xss || true
         run_twofa_bypass || true
         
-        # STEP 9: Elite Security Testing
+        # Version: v1.2.1a (Emergency Stability Fix)g
         run_http_smuggling || true
         run_cors_testing || true
         run_cache_poisoning || true

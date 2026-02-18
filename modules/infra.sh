@@ -24,7 +24,7 @@ run_subdomain_takeover() {
             --hide_fails \
             | tee "$OUT_DIR/vulns/subdomain_takeover.txt" || true
         
-        local count=$(grep -c "VULNERABLE" "$OUT_DIR/vulns/subdomain_takeover.txt" 2>/dev/null || echo 0)
+        local count=$(grep -c "VULNERABLE" "$OUT_DIR/vulns/subdomain_takeover.txt" 2>/dev/null || true)
         log_stat "Vulnerable Subdomains" "$count"
     else
         log_warn "No subdomains found even after recon. Skipping takeover detection."

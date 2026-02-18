@@ -144,7 +144,7 @@ run_idor_hunter() {
             cat "$OUT_DIR/.temp/idor_path.txt" >> "$OUT_DIR/vulns/idor_candidates.txt"
         fi
         
-        local final_count=$(grep -c "^[^#]" "$OUT_DIR/vulns/idor_candidates.txt" 2>/dev/null || echo 0)
+        local final_count=$(grep -c "^[^#]" "$OUT_DIR/vulns/idor_candidates.txt" 2>/dev/null || true)
         
         log_stat "HTTP-Verified IDOR" "$verified_count"
         log_stat "Total candidates (all confidence)" "$final_count"

@@ -4,46 +4,67 @@
 
 # === RECONNAISSANCE ===
 detect_stack() {
-    log_phase "TECHNOLOGY DETECTION (DECISION MATRIX)"
+    log_phase "TECHNOLOGY DETECTION (DECISION MATRIX V2.0)"
     
-    if [ ! -s "$OUT_DIR/reports/web_overview.txt" ]; then
+    local report_file="$OUT_DIR/reports/web_overview.txt"
+    if [ ! -s "$report_file" ]; then
         log_warn "No visual recon data found. Skipping technology detection."
         return
     fi
 
     # Reset vars
-    IS_WORDPRESS=false; IS_SPRING=false; HAS_GRAPHQL=false; IS_DOTNET=false; IS_REST=false
+    IS_WORDPRESS=false; IS_SPRING=false; HAS_GRAPHQL=false
+    IS_DOTNET=false; IS_REST=false; IS_JOOMLA=false; IS_DRUPAL=false
+    IS_AWS=false; IS_AZURE=false; IS_GCP=false
 
-    log_step "Analyzing technology stack..."
+    log_step "Analyzing technology stack (Smart Detection)..."
     
-    if grep -qi "WordPress" "$OUT_DIR/reports/web_overview.txt"; then
+    # CMS DETECTION
+    if grep -qiE "WordPress|wp-content|wp-includes" "$report_file"; then
         IS_WORDPRESS=true
-        log_success "DECISION: WordPress detected!"
+        log_success "DECISION: WordPress detected! (Enabling WP specific scans)"
     fi
+    if grep -qi "Joomla" "$report_file"; then IS_JOOMLA=true; log_success "DECISION: Joomla detected!"; fi
+    if grep -qi "Drupal" "$report_file"; then IS_DRUPAL=true; log_success "DECISION: Drupal detected!"; fi
     
-    if grep -qiE "Spring|Java" "$OUT_DIR/reports/web_overview.txt"; then
+    # FRAMEWORK DETECTION
+    if grep -qiE "Spring|Java|Whitelabel Error Page" "$report_file"; then
         IS_SPRING=true
-        log_success "DECISION: Spring Boot detected!"
+        log_success "DECISION: Spring Boot detected! (Enabling Actuator/HeapDump scans)"
     fi
 
-    if grep -qi "GraphQL" "$OUT_DIR/reports/web_overview.txt" || grep -qi "graphql" "$OUT_DIR/recon/urls.txt"; then
+    if grep -qi "GraphQL" "$report_file" || grep -qi "graphql" "$OUT_DIR/recon/urls.txt"; then
         HAS_GRAPHQL=true
-        log_success "DECISION: GraphQL detected!"
+        log_success "DECISION: GraphQL detected! (Enabling Introspection/Injection scans)"
     fi
 
-    if grep -qiE "ASP.NET|Microsoft|IIS" "$OUT_DIR/reports/web_overview.txt"; then
+    if grep -qiE "ASP.NET|Microsoft|IIS|Mvc" "$report_file"; then
         IS_DOTNET=true
         log_success "DECISION: .NET Infrastructure detected!"
     fi
 
-    if grep -qiE "application/json|swagger|openapi" "$OUT_DIR/reports/web_overview.txt" || grep -qiE "/api/|/v[0-9]/" "$OUT_DIR/recon/urls.txt"; then
+    if grep -qiE "application/json|swagger|openapi" "$report_file" || grep -qiE "/api/|/v[0-9]/" "$OUT_DIR/recon/urls.txt"; then
         IS_REST=true
         log_success "DECISION: REST API context detected!"
+    fi
+    
+    # CLOUD PROVIDER DETECTION
+    if grep -qiE "amazonaws|cloudfront|elasticbeanstalk" "$report_file"; then
+        IS_AWS=true
+        log_success "DECISION: AWS Infrastructure detected! (Checking S3 buckets)"
+    fi
+    if grep -qiE "azure|windows.net" "$report_file"; then
+        IS_AZURE=true
+        log_success "DECISION: Azure Infrastructure detected!"
+    fi
+    if grep -qiE "google|gcp|appspot" "$report_file"; then
+        IS_GCP=true
+        log_success "DECISION: Google Cloud Platform detected!"
     fi
 }
 
 run_cms_detection() {
-    log_phase "03B: CMS DETECTION & VULN SCAN (CMSeeK)"
+    log_phase "CMS DETECTION & VULN SCAN (CMSeeK)"
     
     if check_dependency "$OUT_DIR/recon/cms_detection.json" "CMSeeK"; then return; fi
     
@@ -408,34 +429,59 @@ run_visual_recon() {
     
     log_phase "RECON METADATA & TITLES"
     
+    # 1. Validación de Input
     if [ ! -s "$OUT_DIR/recon/urls.txt" ]; then
-        log_warn "No URLs from passive recon. Skipping visual reconnaissance."
+        log_warn "No URLs from passive recon (urls.txt is empty). Skipping visual reconnaissance."
         touch "$OUT_DIR/reports/web_overview.txt"
         return
     fi
     
+    local url_count=$(wc -l < "$OUT_DIR/recon/urls.txt")
+    
     mkdir -p "$OUT_DIR/reports"
     
-    log_step "Httpx: Extracting Titles, Servers and Technologies (No Screenshots)..."
-    
-    # BUSCADOR DE BINARIO — resolved by common.sh:resolve_httpx_bin()
+    # 2. Validación de Binario
+    if [ -z "$HTTPX_BIN" ] || [ "$HTTPX_BIN" == "false" ]; then
+        log_err "CRITICAL: httpx binary is not available. Skipping visual recon."
+        return
+    fi
 
-    # EJECUCIÓN LIGERA
+    log_step "Httpx: Extracting Titles, Servers and Technologies..."
+    log_stat "Target URLs" "$url_count"
+    log_stat "Using Binary" "$HTTPX_BIN"
+
+    # 3. Ejecución Controlada con Logs de Depuración
     # -title: Obtiene el <title> de la web
     # -tech-detect: Identifica si usan React, PHP, AWS, etc.
     # -status-code: Para ver si es 200, 403, etc.
     # -follow-redirects: Sigue redirecciones para ver el destino final
+    
     $HTTPX_BIN -list "$OUT_DIR/recon/urls.txt" \
         -title -tech-detect -status-code -web-server -follow-redirects \
         -threads 50 \
-        -no-color -o "$OUT_DIR/reports/web_overview.txt"
-    
-    log_success "Visual recognition complete. Summary saved in reports/web_overview.txt"
-    
-    # Mostramos una vista previa de 5 líneas para que veas qué encontró
-    echo -e "\n${DIM}--- Report Preview ---${RESET}"
-    head -n 5 "$OUT_DIR/reports/web_overview.txt"
-    echo -e "${DIM}--------------------------------${RESET}\n"
+        -no-color -o "$OUT_DIR/reports/web_overview.txt" 2>/dev/null
+        
+    local exit_code=$?
+
+    # 4. Verificación de Resultados
+    if [ $exit_code -ne 0 ]; then
+        log_err "Httpx failed with output code: $exit_code"
+        # No retornamos inmediatamente para permitir intentos parciales, pero avisamos
+    fi
+
+    if [ -s "$OUT_DIR/reports/web_overview.txt" ]; then
+        local found_count=$(wc -l < "$OUT_DIR/reports/web_overview.txt")
+        log_success "Visual recognition completed successfully."
+        log_stat "Entradas Generadas" "$found_count"
+        
+        # Mostramos una vista previa de 5 líneas PARA EL HACKER
+        echo -e "\n${DIM}--- Report Preview (First 5 lines) ---${RESET}"
+        head -n 5 "$OUT_DIR/reports/web_overview.txt"
+        echo -e "${DIM}----------------------------------------${RESET}\n"
+    else
+        log_warn "Httpx finished but generated NO output. Check network or binary permissions."
+        log_warn "Debug: Try running '$HTTPX_BIN -version' manually."
+    fi
 }
 
 # 39. HUNTER'S TOOLKIT (Phase 2C Extension)

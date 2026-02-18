@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # ============================================================================
-# REDHAVEN v1.2.0 — Offensive Bug Bounty Framework
+# REDHAVEN v1.2.1a — Offensive Bug Bounty Framework
 # Elite Red Team Edition • by darkne55
 # ============================================================================
 
@@ -59,7 +59,12 @@ INTERACTIVE=true
 parse_flags() {
     while [[ $# -gt 0 ]]; do
         case "$1" in
-            -d|--domain)    CLI_TARGET="$2"; INTERACTIVE=false; shift 2 ;;
+            -d|--domain)    
+                if [[ ! "$2" =~ ^[a-zA-Z0-9.-]+$ ]]; then
+                    echo -e "${ERROR}[✘] ERROR: Invalid domain format.${RESET}"
+                    exit 1
+                fi
+                CLI_TARGET="$2"; INTERACTIVE=false; shift 2 ;;
             -m|--mode)      CLI_MODE="$2"; shift 2 ;;
             -t|--threads)   CLI_THREADS="$2"; shift 2 ;;
             --deep)         FLAG_DEEP=true; shift ;;
@@ -74,7 +79,7 @@ parse_flags() {
 }
 
 show_help() {
-    echo -e "${BR}${BOLD}REDHAVEN 1.1.0 — Command Reference${RESET}"
+    echo -e "${BR}${BOLD}REDHAVEN 1.2.1 — Command Reference${RESET}"
     echo ""
     echo -e "${W}USAGE:${RESET}"
     echo "  ./start.sh                              # Interactive wizard"
@@ -171,7 +176,7 @@ draw_header() {
 LOGO
     echo -e "${RESET}"
     center "${D}=========================================================${RESET}"
-    center "${LR}[*]${RESET} ${W}v1.2.0${RESET}  ${D}|${RESET}  ${W}Elite Red Team Edition${RESET}  ${D}|${RESET}  ${D}by darkne55${RESET}"
+    center "${LR}[*]${RESET} ${W}v1.2.1a${RESET}  ${D}|${RESET}  ${W}Emergency Stability Fix${RESET}  ${D}|${RESET}  ${D}by darkne55${RESET}"
     center "${D}Build ${BUILD_ID} // ${OPERATOR}@${HOSTNAME_SYS}${RESET}"
     center "${D}=========================================================${RESET}"
     echo ""
@@ -181,7 +186,7 @@ LOGO
 draw_subheader() {
     clear
     echo ""
-    center "${BR}${BOLD}[*] R E D H A V E N${RESET}  ${D}v1.2.0  //  Elite Red Team Edition${RESET}"
+    center "${BR}${BOLD}[*] R E D H A V E N${RESET}  ${D}v1.2.1a  //  Emergency Stability Fix${RESET}"
     hline "-"
     echo ""
 }
@@ -275,6 +280,7 @@ run_wizard() {
         4) wizard_osint ;;
         5) wizard_mobile ;;
         6) wizard_full_assault ;;
+        # 17) run_ai_hunter ;; # DISABLED: Module under refactoring
         a) run_advanced_menu ;;
         r) MODO=99; MODE_NAME="REPORT GENERATION" ;;
         *) error_exit "Invalid choice." ;;
@@ -448,17 +454,22 @@ wizard_mobile() {
 wizard_full_assault() {
     draw_subheader
 
-    echo ""
-    echo -e "${LR}"
-    cat <<'FA' | render_ascii
-  ___ _   _ _    _       _   ___ ___  _   _   _ _  _____
- | __| | | | |  | |     /_\ / __/ __|| \ | | | | ||_   _|
- | _|| |_| | |__| |__  / _ \\__ \__ \|  \| |_| |_|  | |
- |_|  \___/|____|____|/_/ \_\___/___/|_|\__|_____/  |_|
-FA
-    echo -e "${RESET}"
+echo ""
+echo -e "${LR}"
+cat <<'FA' | render_ascii
+ ██████╗ ███████╗ █████╗ ██████╗ ██╗   ██╗
+ ██╔══██╗██╔════╝██╔══██╗██╔══██╗╚██╗ ██╔╝
+ ██████╔╝█████╗  ███████║██║  ██║ ╚████╔╝ 
+ ██╔══██╗██╔══╝  ██╔══██║██║  ██║  ╚██╔╝  
+ ██║  ██║███████╗██║  ██║██████╔╝   ██║   
+ ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚═════╝    ╚═╝   
 
-    center "${LR}${BOLD}MODE 85 -- ALL-IN OFFENSIVE PIPELINE${RESET}"
+      TO HACK?
+FA
+echo -e "${RESET}"
+
+
+    center "${LR}${BOLD}ALL-IN OFFENSIVE PIPELINE${RESET}"
     center "${D}Every module. Every vector. Maximum coverage.${RESET}"
     echo ""
 
@@ -598,6 +609,9 @@ else
 fi
 
 [ -z "$TARGET" ] && error_exit "Target domain is required."
+if [[ ! "$TARGET" =~ ^[a-zA-Z0-9.-]+$ ]]; then
+    error_exit "Invalid target format. Use domains or IPs only (no schemes/paths)."
+fi
 
 # Threads
 if [ -n "$CLI_THREADS" ]; then
@@ -677,8 +691,8 @@ CMD_ARGS=(run --rm -it --shm-size=2g \
   -e "OSINT_MODE=$FLAG_OSINT" \
   -v "$PARENT_DIR":/results \
   -v "$(readlink -f scanner.sh)":/usr/local/bin/scanner \
-  -v "$(pwd)/modules/cve_matcher.py":/usr/local/bin/cve_matcher \
-  -v "$(pwd)/modules/s3_bruteforce.py":/usr/local/bin/s3_bruteforce \
+  -v "$(pwd)/modules":/usr/local/bin/modules \
+
   -v "$(pwd)/modules/hunter_toolkit.py":/usr/local/bin/hunter_toolkit \
   -v "$(pwd)/modules/ai_hunter.py":/usr/local/bin/ai_hunter \
   -v "$(pwd)/modules/correlator.py":/usr/local/bin/correlator \
@@ -699,12 +713,12 @@ $FLAG_STEALTH && CMD_ARGS+=(-e "RATE_LIMIT=10")
 
 if [ -n "$APK_FILE" ] && [ -f "$APK_FILE" ]; then
   CMD_ARGS+=(-v "$(realpath "$APK_FILE")":/app.apk)
-  CMD_ARGS+=(darkne55-redhaven /usr/local/bin/scanner -d "$TARGET" -m "$MODO" -t "$THREADS" -a /app.apk)
+  CMD_ARGS+=(darkne55-redhaven:latest /usr/local/bin/scanner -d "$TARGET" -m "$MODO" -t "$THREADS" -a /app.apk)
 elif [ -n "$IPA_FILE" ] && [ -f "$IPA_FILE" ]; then
   CMD_ARGS+=(-v "$(realpath "$IPA_FILE")":/app.ipa)
-  CMD_ARGS+=(darkne55-redhaven /usr/local/bin/scanner -d "$TARGET" -m "$MODO" -t "$THREADS" -i /app.ipa)
+  CMD_ARGS+=(darkne55-redhaven:latest /usr/local/bin/scanner -d "$TARGET" -m "$MODO" -t "$THREADS" -i /app.ipa)
 else
-  CMD_ARGS+=(darkne55-redhaven /usr/local/bin/scanner -d "$TARGET" -m "$MODO" -t "$THREADS")
+  CMD_ARGS+=(darkne55-redhaven:latest /usr/local/bin/scanner -d "$TARGET" -m "$MODO" -t "$THREADS")
 fi
 
 if groups | grep -q docker; then

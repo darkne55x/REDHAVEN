@@ -146,9 +146,16 @@ run_infrastructure_scan()
     
     # --- v1.0.3: S3 BUCKET BRUTEFORCE ---
     log_step "S3 Bruteforce: Testing bucket permutations..."
-    if [ -f "/usr/local/bin/s3_bruteforce.py" ] || [ -f "./s3_bruteforce.py" ]; then
+    # Updated path check to include modules directory
+    if [ -f "/usr/local/bin/modules/s3_bruteforce.py" ]; then
+        S3_SCRIPT="/usr/local/bin/modules/s3_bruteforce.py"
+    elif [ -f "/usr/local/bin/s3_bruteforce.py" ]; then
         S3_SCRIPT="/usr/local/bin/s3_bruteforce.py"
-        [ ! -f "$S3_SCRIPT" ] && S3_SCRIPT="./s3_bruteforce.py"
+    else
+        S3_SCRIPT="./s3_bruteforce.py"
+    fi
+
+    if [ -f "$S3_SCRIPT" ]; then
         
         python3 "$S3_SCRIPT" "$TARGET" \
             "$OUT_DIR/vulns/s3_bruteforce.txt" \
@@ -161,9 +168,16 @@ run_infrastructure_scan()
     # Execute after visual recon to ensure tech versions are detected
     if [ -f "$OUT_DIR/reports/web_overview.txt" ]; then
         log_step "CVE Matcher: Correlating detected versions with CVEs..."
-        if [ -f "/usr/local/bin/cve_matcher.py" ] || [ -f "./cve_matcher.py" ]; then
+        # Updated path check for CVE matcher
+        if [ -f "/usr/local/bin/modules/cve_matcher.py" ]; then
+            CVE_SCRIPT="/usr/local/bin/modules/cve_matcher.py"
+        elif [ -f "/usr/local/bin/cve_matcher.py" ]; then
             CVE_SCRIPT="/usr/local/bin/cve_matcher.py"
-            [ ! -f "$CVE_SCRIPT" ] && CVE_SCRIPT="./cve_matcher.py"
+        else
+            CVE_SCRIPT="./cve_matcher.py"
+        fi
+
+        if [ -f "$CVE_SCRIPT" ]; then
             
             python3 "$CVE_SCRIPT" "$OUT_DIR" 2>/dev/null || true
         else

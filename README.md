@@ -1,6 +1,6 @@
-# REDHAVEN v1.2.0 - Intelligent Offensive Framework
+# REDHAVEN v1.2.1 - Intelligent Offensive Framework
 
-![Version](https://img.shields.io/badge/version-1.2.0-red?style=for-the-badge)
+![Version](https://img.shields.io/badge/version-1.2.1-red?style=for-the-badge)
 ![License](https://img.shields.io/badge/license-GPLv3-green?style=for-the-badge)
 ![Status](https://img.shields.io/badge/status-Elite_Red_Team_Edition-black?style=for-the-badge)
 
@@ -8,9 +8,9 @@
 
 ---
 
-## 🛡️ v1.2.0: The Modular & Performance Evolution
+## 🛡️ v1.2.1: Security, Stability & Logic Evolution
 
-Version 1.2.0 is a fundamental architectural overhaul and a massive performance upgrade. We transitioned from a monolith to a module system while fixing systemic bottlenecks and expanding the attack surface.
+Version 1.2.1 focuses on making the framework safer, more robust, and context-aware. We added strict security validation, improved error tracking, and overhauled the technology stack detection.
 
 ### ⚡ Performance & Stability
 
@@ -32,7 +32,7 @@ Version 1.2.0 is a fundamental architectural overhaul and a massive performance 
 | **BOLA/BFLA v2** | **JWT Attack v2** | **GraphQL Deep v2** |
 | **OAuth v2** | **SSRF Storm v2** | **IDOR v2** |
 | **XSS v2** | **Logic Flaws v2** | **Client Fuzzing v2** |
-| **API Limit v2** | **XXE Probe v1** | **Cloud Enum v1** |
+| **API Limit v2** | **XXE Probe v1** | **Stack Detection v2** |
 
 ---
 
@@ -143,7 +143,7 @@ Version 1.1.0 introduced the main framework overhaul, featuring:
 ### Build
 
 ```bash
-docker build -t redhaven:latest .
+docker build -t darkne55-redhaven:latest .
 ```
 
 ### Guided Launch
@@ -165,7 +165,8 @@ docker build -t redhaven:latest .
 
 | Version | Milestone |
 | --- | --- |
-| **v1.2.0** | **Modular Evolution**: Monolith split into 28 modules, 16 Elite rewrites, Phase F integrations (dirsearch, CMSeeK, cloud_enum). |
+| **v1.2.1** | **Security & Stability**: Strict input validation, robust `httpx` resolution, centralized error logging, and Stack Detection v2.0. |
+| **v1.2.0** | **Modular Evolution**: Monolith split into 28 modules, 16 Elite rewrites, Phase F integrations. |
 | **v1.1.2** | **Intelligence Upgrade**: Smart Secrets, IDOR v2, XSS v2, Entropy Filtering. |
 | **v1.1.0** | **Strategic Jump**: Wizard, Smart Flags, OSINT, Deep Injections, Mode Reorg. |
 | **v1.0.5** | Versioning fix, container stability, attribution update (Nelux1). |
@@ -181,4 +182,4 @@ docker build -t redhaven:latest .
 
 Educational and authorized bug bounty use only. Respect the target's scope and legal requirements.
 
-**Ready to find critical vulnerabilities? Launch REDHAVEN v1.2.0 now.**
+**Ready to find critical vulnerabilities? Launch REDHAVEN v1.2.1 now.**

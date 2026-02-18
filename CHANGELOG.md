@@ -1,10 +1,37 @@
 # CHANGELOG - REDHAVEN
 
+## [1.2.1a] - 2026-02-17
+
+### 🚨 Emergency Stability Fix
+
+- **Fixed**: Robust `httpx` resolution inside Docker (naming conflict with Python libraries).
+- **Fixed**: Path mismatches for modular Python scripts (`s3_bruteforce.py`, `cve_matcher.py`).
+- **Fixed**: "Double zero" output bug in Subdomain Takeover and IDOR modules.
+- **Fixed**: Docker image name mismatch in `start.sh` (reverted to `darkne55-redhaven`).
+- **Improved**: `run_visual_recon` robustness with proactive file existence checks.
+- **Improved**: Verbose logging for toolchain verification and target counts.
+
+## [v1.2.1] - 2026-02-17
+
+### 🛡️ The "Security & Stability" Release
+
+#### Added [v1.2.1]
+
+- **Strict Input Validation**: Added regex-based sanitization for targets in `start.sh` to prevent command injection.
+- **Robustness Engine**: New centralized error handling in `common.sh` with `scan.log` generation.
+- **Improved Binary Discovery**: Smart resolution for `httpx` and `httpx-pd` naming variations.
+- **Stack Detection v2.0**: Enhanced logic in `recon.sh` to detect Cloud Providers (AWS/Azure/GCP), CMS (Joomla/Drupal), and Frameworks.
+
+#### Fixed [v1.2.1]
+
+- **Deactivated Missing Modules**: Disabled `ai_hunter` triggers in `scanner.sh` and menus to prevent runtime errors.
+- **Typo Fixes**: Fixed several minor typos in flag parsing and UI headers.
+
 ## [v1.2.0] - 2026-02-17
 
 ### 🔄 The "Modular Evolution" Release
 
-#### Added
+#### Added [v1.2.0]
 
 - **Modular Architecture**: Ported 4000+ lines of monolithic bash into **28 independent modules** in `/modules/`.
 - **Elite Upgrades (16 Rewrites)**: Complete native bash rewrites for 16 core engines.
@@ -23,7 +50,7 @@
   - **CMSeeK**: Advanced CMS detection & vulnerability check added to `recon.sh` and `scanner.sh`.
   - **cloud_enum**: Cloud bucket enumeration (S3, Azure, GCP) added to `osint.sh`, Mode 83 and 85.
 
-#### Changed
+#### Changed [v1.2.0]
 
 - **Version Bump**: Major jump to v1.2.0 due to fundamental architectural changes.
 - **Improved Portability**: Modules can now be tested and used independently of the main orchestrator.
