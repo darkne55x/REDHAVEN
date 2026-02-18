@@ -1,4 +1,15 @@
-# REDHAVEN v1.2.1 - Intelligent Offensive Framework
+# REDHAVEN v1.2.1a - Intelligent Offensive Framework
+
+## [1.2.1a] - 2026-02-17
+
+### 🚨 Emergency Stability Fix
+
+- **Fixed**: Robust `httpx` resolution inside Docker (naming conflict with Python libraries).
+- **Fixed**: Path mismatches for modular Python scripts (`s3_bruteforce.py`, `cve_matcher.py`).
+- **Fixed**: "Double zero" output bug in Subdomain Takeover and IDOR modules.
+- **Fixed**: Docker image name mismatch in `start.sh` (reverted to `darkne55-redhaven`).
+- **Improved**: `run_visual_recon` robustness with proactive file existence checks.
+- **Improved**: Verbose logging for toolchain verification and target counts.
 
 ![Version](https://img.shields.io/badge/version-1.2.1-red?style=for-the-badge)
 ![License](https://img.shields.io/badge/license-GPLv3-green?style=for-the-badge)
