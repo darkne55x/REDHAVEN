@@ -64,18 +64,6 @@ run_secrets_hunter() {
                 fi
             fi
         fi
-    elif [ -f "/home/kali/.gemini/antigravity/scratch/REDHAVEN/modules/smart_secrets.py" ]; then
-        # Fallback: try local path (outside Docker)
-        log_step "Smart Secrets Engine: Entropy + Pattern + Validation scan..."
-        python3 /home/kali/.gemini/antigravity/scratch/REDHAVEN/modules/smart_secrets.py \
-            --urls "$OUT_DIR/endpoints/js_targets.txt" \
-            --output "$OUT_DIR/secrets" \
-            --workers 20 2>/dev/null || true
-        
-        if [ -s "$OUT_DIR/secrets/smart_secrets.json" ]; then
-            local total=$(jq -r '.total_findings // 0' "$OUT_DIR/secrets/smart_secrets.json" 2>/dev/null || echo 0)
-            log_stat "Smart Secrets Findings" "$total"
-        fi
     else
         log_warn "smart_secrets.py not found. Falling back to basic pattern scan."
         # Minimal fallback: grep for obvious secrets in downloaded JS

@@ -170,7 +170,7 @@ run_recon_passive() {
     # Si no hay tokens.txt, intentar extraer de provider-config.yaml
     if [ -z "$TOKENS_FILE" ]; then
         for config_path in "/root/.config/subfinder/provider-config.yaml" \
-                           "/home/kali/.config/subfinder/provider-config.yaml" \
+
                            "/root/.config/nuclei/provider-config.yaml" \
                            "/results/provider-config.yaml"; do
             if [ -f "$config_path" ]; then

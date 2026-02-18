@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # ============================================================================
-# REDHAVEN v1.2.1a — Offensive Bug Bounty Framework
+# REDHAVEN v1.2.2 — Offensive Bug Bounty Framework
 # Elite Red Team Edition • by darkne55
 # ============================================================================
 
@@ -143,6 +143,35 @@ render_ascii() {
     done
 }
 
+# --- UPDATE CHECKER (NEW) ---
+check_framework_updates() {
+    echo -ne "   ${INFO}[*] Checking for REDHAVEN updates...${RESET}"
+    
+    # 1. Check Framework Version (GitHub)
+    local remote_version
+    remote_version=$(curl -s --max-time 3 "https://raw.githubusercontent.com/darkne55x/REDHAVEN/main/VERSION.txt" || echo "Error")
+    
+    local local_version
+    local_version=$(cat VERSION.txt 2>/dev/null || echo "Unknown")
+    
+    # Remove whitespace
+    remote_version=$(echo "$remote_version" | xargs)
+    local_version=$(echo "$local_version" | xargs)
+    
+    if [ "$remote_version" = "Error" ]; then
+        echo -e " ${WARN}(Offline/GitHub Unreachable)${RESET}"
+    elif [ "$remote_version" != "$local_version" ] && [ -n "$remote_version" ]; then
+        echo -e "\n   ${BG_FATAL}${W} UPDATE AVAILABLE: v$remote_version ${RESET}"
+        echo -e "   ${WARN}Current version: $local_version${RESET}"
+        echo -e "   ${INFO}To update, run:${RESET}"
+        echo -e "   ${D}  git pull${RESET}"
+        echo -e "   ${D}  docker build -t darkne55-redhaven:latest .${RESET}\n"
+        read -p "   Press [Enter] to continue..."
+    else
+        echo -e " ${SUCCESS}v$local_version (Latest)${RESET}"
+    fi
+}
+
 # Ask yes/no
 ask_yn() {
     local prompt="$1" default="$2" result
@@ -176,7 +205,7 @@ draw_header() {
 LOGO
     echo -e "${RESET}"
     center "${D}=========================================================${RESET}"
-    center "${LR}[*]${RESET} ${W}v1.2.1a${RESET}  ${D}|${RESET}  ${W}Emergency Stability Fix${RESET}  ${D}|${RESET}  ${D}by darkne55${RESET}"
+    center "${LR}[*]${RESET} ${W}v1.2.2${RESET}  ${D}|${RESET}  ${W}Toolchain Update Edition${RESET}  ${D}|${RESET}  ${D}by darkne55${RESET}"
     center "${D}Build ${BUILD_ID} // ${OPERATOR}@${HOSTNAME_SYS}${RESET}"
     center "${D}=========================================================${RESET}"
     echo ""
@@ -186,7 +215,7 @@ LOGO
 draw_subheader() {
     clear
     echo ""
-    center "${BR}${BOLD}[*] R E D H A V E N${RESET}  ${D}v1.2.1a  //  Emergency Stability Fix${RESET}"
+    center "${BR}${BOLD}[*] R E D H A V E N${RESET}  ${D}v1.2.2  //  Toolchain Update Edition${RESET}"
     hline "-"
     echo ""
 }
@@ -556,6 +585,7 @@ run_advanced_menu() {
       "${LR}${BOLD}[85]${RESET} ${LR}${BOLD}RED TEAM ELITE${RESET}    ${D}ALL-IN PIPELINE${RESET}"
 
     echo ""
+    echo -e "   ${D}[98] Update Toolchain${RESET}"
     echo -e "   ${D}[99] Generate Report${RESET}"
     echo ""
 
@@ -569,6 +599,7 @@ run_advanced_menu() {
 # ═══════════════════════════════════════════════════
 
 # Boot
+check_framework_updates
 boot_sequence
 
 # Docker check
@@ -591,9 +622,43 @@ case "$MODO" in
   83) MODE_NAME="${MODE_NAME:-OSINT INTELLIGENCE}" ;;
   84) MODE_NAME="${MODE_NAME:-ELITE CLASSIC}" ;;
   85) MODE_NAME="${MODE_NAME:-RED TEAM ELITE}" ;;
+  98) MODE_NAME="${MODE_NAME:-UPDATE TOOLCHAIN}" ;;
 esac
 
 [ -z "$MODO" ] && error_exit "No mode selected."
+
+# ═══════════════════════════════════════════════════
+
+# Special Mode: Update Toolchain (Host-side execution)
+if [ "$MODO" -eq 98 ]; then
+    echo ""
+    hline "=" "${BR}${BOLD}UPDATING TOOLCHAIN${RESET}"
+    echo ""
+    echo -e "   ${INFO}Detected Request: Toolchain Update${RESET}"
+    echo -e "   ${D}This will rebuild the Docker image to fetch latest tools & templates.${RESET}"
+    echo ""
+    
+    if ask_yn "Proceed with full update?" "y"; then
+        echo ""
+        echo -e "   ${INFO}Running: docker build -t darkne55-redhaven:latest .${RESET}"
+        if groups | grep -q docker; then
+            docker build -t darkne55-redhaven:latest .
+        else
+            sudo docker build -t darkne55-redhaven:latest .
+        fi
+        
+        if [ $? -eq 0 ]; then
+            echo ""
+            print_ok "Update Complete! Please restart REDHAVEN."
+            exit 0
+        else
+            error_exit "Update failed. Check Docker logs."
+        fi
+    else
+        echo -e "   ${WARN}Update cancelled.${RESET}"
+        exit 0
+    fi
+fi
 
 # ═══════════════════════════════════════════════════
 # ██ TARGET CONFIG

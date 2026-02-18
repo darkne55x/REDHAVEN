@@ -35,14 +35,13 @@ By participating in this project, you agree to abide by our [Code of Conduct](CO
 4. Error occurs at Phase X
 
 **Logs:**
-```
-
+```bash
 [Paste relevant error messages]
-
 ```
 
 **Additional Context:**
 [Any other relevant information]
+
 ```
 
 ## 💡 Feature Requests
@@ -144,15 +143,18 @@ Fixes #123
 
 ## 📂 Project Structure
 
-```
+```text
 REDHAVEN/
-├── scanner.sh          # Main orchestrator
-├── start.sh            # Entry point
-├── correlator.py       # Findings correlation
-├── ai_hunter.py        # AI-powered analysis
-├── cve_matcher.py      # CVE auto-matching
-├── s3_bruteforce.py    # Cloud storage discovery
-└── [module].py         # Individual security modules
+├── scanner.sh          # Main orchestrator (Module manager)
+├── start.sh            # Global entry point (Host UI & Docker launcher)
+├── modules/            # Directory containing all security modules
+│   ├── common.sh       # Shared functions and logging
+│   ├── recon.sh        # Reconnaissance logic
+│   ├── endpoints.sh    # Cloud & Infrastructure scanning
+│   ├── correlator.py   # Findings correlation engine
+│   └── [module].sh/py  # Specialized attack modules
+├── templates/          # Nuclei custom templates
+└── config/             # Framework configuration files
 ```
 
 ## 🎨 Code Style
@@ -211,16 +213,20 @@ def analyze_finding(url: str, severity: str) -> dict:
 **Manual Testing:**
 
 ```bash
-# Build Docker image
-docker build -t redhaven-test:dev .
+# Build current Docker image
+docker build -t darkne55-redhaven:latest .
 
-# Test on safe target
+# Test on authorized target
 ./start.sh
+```
+
 > Target: testphp.vulnweb.com
 > Mode: 42
 
 # Verify output files
+
 ls -la results/testphp.vulnweb.com/
+
 ```
 
 **Module Testing:**
@@ -254,7 +260,7 @@ Contributors will be recognized in:
 - **Bugs**: [GitHub Issues](https://github.com/darkne55x/REDHAVEN/issues)
 - **Security**: `frandinosocial@gmail.com`
 
-## ⚖️ License
+### ⚖️ License
 
 By contributing, you agree that your contributions will be licensed under the GPLv3 License.
 

@@ -1,5 +1,18 @@
 # CHANGELOG - REDHAVEN
 
+## [v1.2.2] - 2026-02-17
+
+### Added
+
+- **Update Toolchain (Option 98)**: New menu option to force a Docker rebuild and update all tools (Nuclei templates, freshclam, etc.).
+- **Framework Update Check**: Automatically checks GitHub for newer REDHAVEN versions at startup.
+- **Documentation Overhaul**: Simplified README with "Getting Started" guide; moved full history here.
+
+### Changed
+
+- Refactored `start.sh` menu structure.
+- Cleaned hardcoded development paths in modules.
+
 ## [1.2.1a] - 2026-02-17
 
 ### 🚨 Emergency Stability Fix

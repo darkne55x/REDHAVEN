@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # =======================================================================================
-# REDHAVEN v1.2.1 • Offensive Bug Bounty Framework • Modular Architecture • by darkne55
+# REDHAVEN v1.2.2 • Offensive Bug Bounty Framework • Modular Architecture • by darkne55
 # =======================================================================================
 
 set -euo pipefail
