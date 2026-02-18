@@ -484,7 +484,7 @@ run_visual_recon() {
     fi
 }
 
-# 39. HUNTER'S TOOLKIT (Phase 2C Extension)
+# 39. HUNTER'S TOOLKIT
 run_hunter_toolkit() {
     log_phase "HUNTER'S TOOLKIT (UNICODE/EMAIL/CLICKJACKING)"
     
@@ -503,8 +503,8 @@ run_hunter_toolkit() {
 # 40. ALTERNATIVE RECON (NELUX1 INTEGRATION)
 run_alternate_recon() {
     if check_dependency "$OUT_DIR/recon/nelux1_final.txt" "Alternate Recon"; then return; fi
-    log_phase "ALTERNATIVE RECON (NELUX1)"
-    log_step "[*] Based on Alternative Recon tools by Nelux1"
+    log_phase "RECON: AUTOMATIC + RECINVERSO"
+    log_step "[*] Based on Recon tools by Nelux1"
     
     local domain="$TARGET"
     mkdir -p "$OUT_DIR/recon/"
@@ -513,7 +513,7 @@ run_alternate_recon() {
     
     # 2. AMASS (Passive)
     if command -v amass >/dev/null; then
-        log_step "Running Amass (Passive Mode)..."
+        log_step "Running AMASS (Passive Mode)..."
         amass enum -passive -d "$domain" -silent -o "$OUT_DIR/recon/nelux1_amass.txt" 2>/dev/null || true
         log_stat "Amass Results" "$(wc -l < "$OUT_DIR/recon/nelux1_amass.txt" 2>/dev/null || echo 0)"
     else

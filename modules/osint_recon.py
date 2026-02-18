@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-REDHAVEN v1.2.0 — OSINT Recon Module
+REDHAVEN v1.2.2 — OSINT Recon Module
 by darkne55
 
 Features:
@@ -33,7 +33,7 @@ except ImportError:
 BANNER = """
 \033[1;31m
 ╔══════════════════════════════════════════════════════╗
-║   REDHAVEN v1.2.0 — OSINT Recon Module              ║
+║   REDHAVEN v1.2.2 — OSINT Recon Module               ║
 ║   by darkne55                                        ║
 ╚══════════════════════════════════════════════════════╝
 \033[0m"""

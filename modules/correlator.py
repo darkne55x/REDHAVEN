@@ -6,7 +6,7 @@ import time
 from pathlib import Path
 
 # ============================================================================
-# DARKNE55 CORRELATION ENGINE V1.2 (PRO EDITION + CRLF SUPPORT)
+# DARKNE55 CORRELATION ENGINE V1.2
 # ============================================================================
 
 class Colors:

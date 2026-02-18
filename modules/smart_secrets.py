@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-REDHAVEN Smart Secrets Scanner v1.1.0
+REDHAVEN Smart Secrets Scanner v1.2.2
 =====================================
 Intelligent secret detection with entropy analysis, context awareness,
 and live key validation. Replaces naive grep-based approaches.
@@ -747,7 +747,7 @@ class SmartSecretScanner:
 # ============================================================================
 def main():
     parser = argparse.ArgumentParser(
-        description="REDHAVEN Smart Secrets Scanner v1.1.0"
+        description="REDHAVEN Smart Secrets Scanner v1.2.2"
     )
     parser.add_argument("--file", help="Scan a single file")
     parser.add_argument("--dir", help="Scan a directory recursively")
@@ -761,7 +761,7 @@ def main():
 
     scanner = SmartSecretScanner(validate_live=not args.no_validate)
 
-    print("[*] REDHAVEN Smart Secrets Scanner v1.1.0")
+    print("[*] REDHAVEN Smart Secrets Scanner v1.2.2")
     print("[*] Patterns loaded:", len(SECRET_PATTERNS))
 
     # Scan based on input mode

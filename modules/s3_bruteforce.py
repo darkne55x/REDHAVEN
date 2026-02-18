@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-REDHAVEN v1.0.3 - S3 Bucket Bruteforce Engine
+REDHAVEN v1.2.2 - S3 Bucket Bruteforce Engine
 Generates intelligent bucket name permutations and tests cloud storage access
 """
 
@@ -247,7 +247,7 @@ def test_bucket(bucket_name: str) -> List[BucketInfo]:
 
 def main(target: str, output_file: Optional[str] = None, threads: int = 10):
     print(f"{Colors.GREEN}{Colors.BOLD}╔═══════════════════════════════════════════════════════════╗{Colors.RESET}")
-    print(f"{Colors.GREEN}{Colors.BOLD}║       S3 BUCKET BRUTEFORCE ENGINE v1.0.3                  ║{Colors.RESET}")
+    print(f"{Colors.GREEN}{Colors.BOLD}║       S3 BUCKET BRUTEFORCE ENGINE v1.2.2                  ║{Colors.RESET}")
     print(f"{Colors.GREEN}{Colors.BOLD}╚═══════════════════════════════════════════════════════════╝{Colors.RESET}\n")
     
     # Generate permutations
@@ -303,7 +303,7 @@ def main(target: str, output_file: Optional[str] = None, threads: int = 10):
     
     # Summary
     print(f"\n{Colors.GREEN}{Colors.BOLD}╔═══════════════════════════════════════════════════════════╗{Colors.RESET}")
-    print(f"{Colors.GREEN}{Colors.BOLD}║               S3 BRUTEFORCE COMPLETE                       ║{Colors.RESET}")
+    print(f"{Colors.GREEN}{Colors.BOLD}║               S3 BRUTEFORCE COMPLETE                      ║{Colors.RESET}")
     print(f"{Colors.GREEN}{Colors.BOLD}╚═══════════════════════════════════════════════════════════╝{Colors.RESET}\n")
     
     # Count by status

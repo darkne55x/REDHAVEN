@@ -15,8 +15,8 @@ from typing import List, Dict
 
 BANNER = """
 ╔══════════════════════════════════════════════════════════╗
-║  BLIND XSS HUNTER - Out-of-Band XSS Detection           ║
-║  Part of REDHAVEN Framework v1.0.5                       ║
+║  BLIND XSS HUNTER - Out-of-Band XSS Detection            ║
+║  Part of REDHAVEN Framework v1.2.2                       ║
 ╚══════════════════════════════════════════════════════════╝
 """
 
@@ -150,20 +150,20 @@ def setup_callback_info():
 ╔═══════════════════════════════════════════════════════════════════╗
 ║  CALLBACK SERVER SETUP                                            ║
 ╠═══════════════════════════════════════════════════════════════════╣
-║  Option 1: Burp Collaborator (Professional only)                 ║
+║  Option 1: Burp Collaborator (Professional only)                  ║
 ║    - Generate: burpcollaborator.net/xxxxx                         ║
 ║    - Monitor: Burp Suite > Collaborator tab                       ║
 ║                                                                   ║
-║  Option 2: Interact.sh (Free, by ProjectDiscovery)              ║
-║    - Install: go install github.com/projectdiscovery/interactsh  ║
+║  Option 2: Interact.sh (Free, by ProjectDiscovery)                ║
+║    - Install: go install github.com/projectdiscovery/interactsh   ║
 ║    - Run: interactsh-client                                       ║
 ║    - Get domain: xxx.interact.sh                                  ║
 ║                                                                   ║
-║  Option 3: XSS Hunter Express (Self-hosted)                      ║
-║    - Repo: github.com/mandatoryprogrammer/xsshunter-express      ║
+║  Option 3: XSS Hunter Express (Self-hosted)                       ║
+║    - Repo: github.com/mandatoryprogrammer/xsshunter-express       ║
 ║    - Deploy: Docker or VPS                                        ║
 ║                                                                   ║
-║  Option 4: Custom Webhook (RequestBin, Webhook.site)            ║
+║  Option 4: Custom Webhook (RequestBin, Webhook.site)              ║
 ║    - Quick test: webhook.site                                     ║
 ╚═══════════════════════════════════════════════════════════════════╝
     """)
