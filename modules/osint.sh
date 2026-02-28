@@ -16,8 +16,9 @@ run_osint_recon() {
     # Count results
     local dork_count=0
     local email_count=0
-    if [ -f "$OUT_DIR/osint/osint_google_dorks.txt" ]; then
-        dork_count=$(grep -cv "^#" "$OUT_DIR/osint/osint_google_dorks.txt" 2>/dev/null || echo 0)
+    if [ -f "$OUT_DIR/osint/osint_google_dorks.md" ]; then
+        # Count lines starting with "- [ ]"
+        dork_count=$(grep -c "^- \[ \]" "$OUT_DIR/osint/osint_google_dorks.md" 2>/dev/null || echo 0)
     fi
     if [ -f "$OUT_DIR/osint/osint_emails.txt" ]; then
         email_count=$(grep -cv "^#" "$OUT_DIR/osint/osint_emails.txt" 2>/dev/null || echo 0)
@@ -83,8 +84,29 @@ run_cloud_enum() {
 run_correlation() {
     if check_dependency "$OUT_DIR/reports/correlated_findings.txt" "Data Correlation"; then return; fi
     log_phase "DATA CORRELATION (SMART)"
+
+    # Legacy correlator (always runs — fast and reliable)
     if [ -f "/usr/local/bin/correlator" ]; then
         python3 /usr/local/bin/correlator "$OUT_DIR" > "$OUT_DIR/reports/correlated_findings.txt" || true
+    fi
+
+    # AI-powered correlation (runs if AI_MODE is enabled)
+    if [ "${AI_MODE:-false}" = "true" ]; then
+        run_ai_analysis
+    fi
+}
+
+# AI ANALYSIS (Smart Correlator + Report Generator)
+run_ai_analysis() {
+    log_phase "AI BRAIN — INTELLIGENT ANALYSIS"
+    log_step "Running AI-powered correlation..."
+
+    if [ -f "/usr/local/bin/modules/ai_brain_cli.py" ]; then
+        python3 /usr/local/bin/modules/ai_brain_cli.py analyze "$OUT_DIR" || {
+            log_warn "AI analysis encountered an error. Continuing with legacy results."
+        }
+    else
+        log_warn "AI Brain module not found. Skipping AI analysis."
     fi
 }
 
@@ -98,5 +120,15 @@ run_reporting() {
     echo "====================================================" >> "$report"
     echo -e "\n--- FINDINGS BY CATEGORY ---" >> "$report"
     find "$OUT_DIR/vulns" "$OUT_DIR/secrets" -type f -exec wc -l {} + >> "$report" 2>/dev/null || true
+
+    # List AI reports if they exist
+    if [ -f "$OUT_DIR/reports/ai_report.md" ]; then
+        echo -e "\n--- AI ANALYSIS AVAILABLE ---" >> "$report"
+        echo "  AI Correlation: reports/ai_analysis.md" >> "$report"
+        echo "  AI Report:      reports/ai_report.md" >> "$report"
+        echo "  Executive:      reports/ai_executive_summary.md" >> "$report"
+        log_success "AI-powered reports generated."
+    fi
+
     log_success "Scan complete. Report in: $report"
 }

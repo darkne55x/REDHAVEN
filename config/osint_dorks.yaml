@@ -1,0 +1,174 @@
+# ============================================================================
+# REDHAVEN OSINT — Customizable Dorks Arsenal (Elite Edition)
+# ============================================================================
+# Aquí definís todos los Dorks que el módulo OSINT va a generar.
+# Podés agregar categorías nuevas o modificar las existentes.
+#
+# Placeholders disponibles (se reemplazan automáticamente):
+#   {domain}       -> Dominio del target (e.g., ejemplo.com)
+#   {company_name} -> Nombre de la empresa (e.g., ejemplo)
+#
+# SECCIONES:
+#   dorks          -> Google Dorks (se abren con google.com/search?q=)
+#   shodan_dorks   -> Shodan queries (se abren con shodan.io/search?query=)
+#   censys_dorks   -> Censys queries (se abren con search.censys.io/search?q=)
+# ============================================================================
+
+# ═══════════════════════════════════════════════════════════════════════
+#  GOOGLE DORKS
+# ═══════════════════════════════════════════════════════════════════════
+dorks:
+  "1. Archivos Sensibles Agrupados":
+    - 'site:{domain} ext:env | ext:sql | ext:log | ext:conf | ext:bak | ext:inc | ext:ini | ext:sh | ext:bz2'
+    - 'site:{domain} ext:xml | ext:json | ext:yml | ext:yaml | ext:properties | ext:csv | ext:db'
+    - 'site:{domain} ext:pem | ext:key | ext:cert | ext:crt | ext:pkcs12 | ext:pfx | ext:p12'
+    - 'site:{domain} ext:doc | ext:docx | ext:odt | ext:pdf | ext:xls | ext:xlsx | ext:ppt | ext:pptx'
+    - 'site:{domain} ext:tar.gz | ext:zip | ext:rar | ext:7z | ext:bz2 | ext:sql.gz'
+
+  "2. Credenciales y Secretos":
+    - 'site:{domain} intext:"password" | intext:"API_KEY" | intext:"secret" ext:txt | ext:log | ext:md'
+    - 'site:{domain} "BEGIN RSA PRIVATE KEY" | "BEGIN OPENSSH PRIVATE KEY" | "BEGIN PGP PRIVATE KEY BLOCK"'
+    - 'site:{domain} intext:"Authorization: Bearer" | intext:"access_token" | intext:"id_token"'
+    - 'site:{domain} ext:ovpn | ext:rdp | ext:ppk intext:"client"'
+    - 'site:{domain} "DB_PASSWORD" | "DB_USERNAME" | "MONGO_URI" | "DATABASE_URL"'
+    - 'site:{domain} "AKIA" | "ASIA" | "aws_secret_access_key"'
+    - 'site:{domain} "ghp_" | "gho_" | "github_pat_" | "glpat-"'
+    - 'site:{domain} "sk-" intext:"openai" | "sk_live_" | "pk_live_" | "rk_live_"'
+    - 'site:{domain} "xoxb-" | "xoxp-" | "xoxs-"'
+    - 'site:{domain} "SG." intext:"sendgrid" | "key-" intext:"mailgun"'
+    - 'site:pastebin.com | site:paste.mozilla.org | site:dpaste.org | site:justpaste.it "{domain}"'
+
+  "3. Paneles de Administración (Login/Auth)":
+    - 'site:{domain} inurl:admin | inurl:login | inurl:dashboard | inurl:portal'
+    - 'site:{domain} inurl:wp-admin | inurl:cpanel | inurl:auth | inurl:phpmyadmin'
+    - 'site:{domain} intitle:"Admin Login" | intitle:"Dashboard" | intitle:"Control Panel"'
+    - 'site:{domain} intitle:"gitlab" | intitle:"jenkins" | intitle:"grafana" | intitle:"kibana" | intitle:"portainer"'
+    - 'site:{domain} inurl:_debug | inurl:actuator | inurl:metrics | inurl:healthcheck'
+
+  "4. Exposición de Infraestructura y Directorios":
+    - 'site:{domain} intitle:"index of" | intitle:"directory listing"'
+    - 'site:{domain} inurl:.git/HEAD | inurl:.svn/entries | inurl:.hg'
+    - 'site:{domain} inurl:server-status | inurl:server-info | inurl:phpinfo'
+    - 'site:{domain} inurl:swagger-ui | inurl:api-docs | inurl:graphql | inurl:graphiql'
+    - 'site:{domain} inurl:wp-content/debug.log | inurl:error.log | inurl:access.log'
+
+  "5. Errores y Fugas de Información":
+    - 'site:{domain} "Fatal error" | "Warning:" | "Stack trace:" | "Exception:" | "Traceback"'
+    - 'site:{domain} "SQL syntax near" | "mysql_fetch" | "ORA-" | "SQLSTATE"'
+    - 'site:{domain} "Index of /" "parent directory"'
+    - 'site:{domain} "Not for public release" | "internal use only" | "confidential"'
+
+  "6. Terceros (3rd Party / SaaS / Cloud)":
+    - 'site:postman.com "{company_name}" | "{domain}"'
+    - 'site:linktr.ee "{company_name}"'
+    - 'site:genial.ly "{company_name}"'
+    - 'site:trello.com "{company_name}" | "{domain}"'
+    - 'site:s3.amazonaws.com "{company_name}" | "{domain}"'
+    - 'site:blob.core.windows.net "{company_name}" | "{domain}"'
+    - 'site:storage.googleapis.com "{company_name}" | "{domain}"'
+    - 'site:github.com "{domain}" "password" | "secret" | "token" | "api_key"'
+    - 'site:gitlab.com "{domain}" "password" | "secret"'
+    - 'site:npmjs.com "{company_name}" | "{domain}"'
+    - 'site:hub.docker.com "{company_name}"'
+    - 'site:atlassian.net "{company_name}"'
+    - 'site:bitbucket.org "{company_name}"'
+    - 'site:notion.so "{company_name}" | "{domain}"'
+    - 'site:docs.google.com "{company_name}" | "{domain}"'
+    - 'site:drive.google.com "{company_name}" | "{domain}"'
+
+  "7. Redes Sociales y Empleados (Email/Contactos)":
+    - 'site:linkedin.com/in "* @{domain}"'
+    - 'site:{domain} "contact" | "email" | "phone"'
+    - 'site:hunter.io "{domain}"'
+
+  "8. Google Dorks Élite (Caza de API Keys & Tokens)":
+    - '"{domain}" "api_key" | "apikey" | "api-key" -site:{domain}'
+    - '"{domain}" "client_secret" | "client_id" | "app_secret" -site:{domain}'
+    - '"{domain}" "firebase" | "firebaseio.com" | "firebaseapp.com"'
+    - '"{domain}" "AWS_ACCESS_KEY_ID" | "AWS_SECRET_ACCESS_KEY" -site:{domain}'
+    - '"{domain}" inurl:drive.google.com | inurl:docs.google.com'
+
+# ═══════════════════════════════════════════════════════════════════════
+#  SHODAN DORKS (queries nativos — se abren directo en shodan.io)
+# ═══════════════════════════════════════════════════════════════════════
+shodan_dorks:
+  "S1. Reconocimiento General":
+    - 'ssl:"{domain}" -net:2000::/3'
+    - 'hostname:"{domain}"'
+    - 'ssl.cert.subject.cn:"{domain}"'
+    - 'org:"{company_name}"'
+
+  "S2. Paneles Admin Expuestos":
+    - 'ssl:"{domain}" http.html:"admin"'
+    - 'ssl:"{domain}" http.html:"login" http.status:200'
+    - 'ssl:"{domain}" http.title:"Dashboard"'
+    - 'ssl:"{domain}" http.html:"phpmyadmin"'
+    - 'ssl:"{domain}" http.title:"Grafana"'
+    - 'ssl:"{domain}" http.title:"Jenkins"'
+    - 'ssl:"{domain}" http.title:"GitLab"'
+    - 'ssl:"{domain}" http.title:"Kibana"'
+    - 'ssl:"{domain}" http.title:"Portainer"'
+    - 'ssl:"{domain}" http.title:"cPanel"'
+
+  "S3. APIs & Swagger Expuestas":
+    - 'ssl:"{domain}" http.html:"swagger" http.status:200'
+    - 'ssl:"{domain}" http.html:"api-docs"'
+    - 'ssl:"{domain}" http.html:"graphql"'
+    - 'ssl:"{domain}" "Content-Type: application/json"'
+
+  "S4. Bases de Datos Expuestas":
+    - 'ssl:"{domain}" product:"MongoDB" -authentication'
+    - 'ssl:"{domain}" product:"elastic" port:9200'
+    - 'ssl:"{domain}" product:"MySQL"'
+    - 'ssl:"{domain}" product:"PostgreSQL"'
+    - 'ssl:"{domain}" product:"Redis" -authentication'
+    - 'ssl:"{domain}" product:"CouchDB"'
+    - 'ssl:"{domain}" port:11211 product:"Memcached"'
+
+  "S5. Servicios Internos & Debug":
+    - 'ssl:"{domain}" http.html:"actuator" | http.html:"/env"'
+    - 'ssl:"{domain}" http.html:"server-status"'
+    - 'ssl:"{domain}" http.html:"phpinfo()"'
+    - 'ssl:"{domain}" "X-Debug" | "Xdebug"'
+    - 'ssl:"{domain}" http.html:".env" http.status:200'
+    - 'ssl:"{domain}" port:8080,8443,9090,3000,8000,5000'
+
+  "S6. Infraestructura Crítica":
+    - 'ssl:"{domain}" port:21 product:"vsftpd" | product:"ProFTPD"'
+    - 'ssl:"{domain}" port:22 product:"OpenSSH"'
+    - 'ssl:"{domain}" port:23 product:"Cisco"'
+    - 'ssl:"{domain}" port:3389 "Remote Desktop"'
+    - 'ssl:"{domain}" port:5900 "VNC"'
+    - 'ssl:"{domain}" port:445 "SMB"'
+    - 'ssl:"{domain}" has_screenshot:true'
+
+  "S7. Certificados SSL Débiles & Expirados":
+    - 'ssl:"{domain}" ssl.cert.expired:true'
+    - 'ssl:"{domain}" ssl.version:sslv2 | ssl.version:sslv3'
+    - 'ssl:"{domain}" ssl.cert.issuer.cn:"Let'\''s Encrypt"'
+    - 'ssl:"{domain}" "vulns:" has_vuln:true'
+
+  "S8. IoT, Cámaras & SCADA":
+    - 'org:"{company_name}" product:"webcamXP" | product:"Hikvision" | product:"Dahua"'
+    - 'org:"{company_name}" port:502 "Modbus"'
+    - 'org:"{company_name}" "Server: GoAhead" | "Server: Boa"'
+    - 'org:"{company_name}" http.title:"DVR" | http.title:"NVR"'
+
+# ═══════════════════════════════════════════════════════════════════════
+#  CENSYS DORKS (queries nativos — se abren directo en search.censys.io)
+# ═══════════════════════════════════════════════════════════════════════
+censys_dorks:
+  "C1. Descubrimiento de Hosts":
+    - 'services.tls.certificates.leaf_data.subject.common_name: "{domain}"'
+    - 'services.http.response.html_title: "{company_name}"'
+    - 'autonomous_system.name: "{company_name}"'
+
+  "C2. Servicios Expuestos":
+    - 'services.tls.certificates.leaf_data.subject.common_name: "{domain}" and services.port: 9200'
+    - 'services.tls.certificates.leaf_data.subject.common_name: "{domain}" and services.port: 27017'
+    - 'services.tls.certificates.leaf_data.subject.common_name: "{domain}" and services.service_name: FTP'
+    - 'services.tls.certificates.leaf_data.subject.common_name: "{domain}" and services.port: 3389'
+
+  "C3. Paneles Web":
+    - 'services.http.response.body: "admin" and services.tls.certificates.leaf_data.subject.common_name: "{domain}"'
+    - 'services.http.response.body: "swagger" and services.tls.certificates.leaf_data.subject.common_name: "{domain}"'

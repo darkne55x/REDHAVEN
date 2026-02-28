@@ -29,6 +29,7 @@ STEALTH_MODE="${STEALTH_MODE:-false}"
 WEB_ONLY="${WEB_ONLY:-false}"
 SKIP_RECON="${SKIP_RECON:-false}"
 OSINT_MODE="${OSINT_MODE:-false}"
+AI_MODE="${AI_MODE:-false}"
 
 # --- OOB CALLBACK (for blind SSRF, blind XSS, DNS exfiltration) ---
 # Set via: docker run -e OOB_DOMAIN=xxx.interact.sh ...

@@ -1,10 +1,24 @@
-# REDHAVEN v1.2.2 - Intelligent Offensive Framework
+# REDHAVEN v1.2.4 — Elite Bug Bounty Framework (AI Core v2.0)
 
-![Version](https://img.shields.io/badge/version-1.2.2-red?style=for-the-badge)
+![Version](https://img.shields.io/badge/version-1.2.4-red?style=for-the-badge)
 ![License](https://img.shields.io/badge/license-GPLv3-green?style=for-the-badge)
-![Status](https://img.shields.io/badge/status-Toolchain_Update_Edition-black?style=for-the-badge)
+![Status](https://img.shields.io/badge/status-Elite_Analyst_Edition-black?style=for-the-badge)
+![AI Powered](https://img.shields.io/badge/AI-Post--Scan_Analysis-blue?style=for-the-badge)
 
-> **The Modular Evolution: 16 Elite Upgrades & Independent Module Engine.**
+> **Execution is for scripts. Intelligence is for Analysts.**
+
+REDHAVEN v1.2.4 introduces the **AI Elite Analyst** model. Instead of struggling with tool execution environments, the AI now acts as a high-level security consultant that analyzes the results already collected by the framework. It reads your `/results/` directory, identifies attack chains, finds dorks, and suggests exactly what to test manually to get the bounty.
+
+---
+
+## 🧠 The AI Elite Analyst (New in v1.2.4)
+
+The AI no longer tries to run bash scripts directly. Instead, it leverages its analytical strengths to interpret complex scan data:
+
+1. **Post-Scan Intelligence**: Run your scans with the classic `start.sh` (Mode 80/81). Once done, launch `redhaven-chat.py`.
+2. **Result Visualization**: Ask the agent *"What targets do I have?"* or *"Analyze gigared.com"*.
+3. **Deep-Dive Analysis**: The AI reads subdomains, open ports, endpoint lists, and vulnerability files. It finds patterns like *"I see an IDOR candidate on /api/user mapping to a 403 bypass on /admin"*.
+4. **Actionable Guidance**: The agent tells you exactly which RedHaven mode to run next or which manual PoC to try for maximum impact.
 
 ---
 
@@ -19,42 +33,54 @@ git clone https://github.com/darkne55/REDHAVEN.git
 cd REDHAVEN
 ```
 
-### 2. Build or Update
+### 2. Install AI Dependencies
 
-Build the Docker container (this installs all tools and updates templates):
-
-```bash
-docker build -t darkne55-redhaven:latest .
-```
-
-> **Pro Tip**: Use the **[98] Update Toolchain** menu option inside the tool to refresh everything later.
-
-### 3. Launch
-
-Run the guided wizard:
+To use the AI Analyst Chat, install the Python requirements:
 
 ```bash
-./start.sh
+pip3 install prompt_toolkit requests pyyaml
+pip3 install google-genai  # Required if using Gemini backend
 ```
 
-Follow the interactive steps to target a domain and select a mission.
+### 3. Configure your AI Provider
+
+Edit `config/ai_config.yaml` to set your provider (Ollama for local, or Gemini/OpenAI for speed):
+
+```yaml
+ai:
+  enabled: true
+  provider: "gemini"       # Options: ollama, gemini, openai, deepseek
+  model: "gemini-2.0-flash-exp" 
+```
 
 ---
 
-## 🛡️ v1.2.2: Toolchain & Stability Update
+## 🎮 Workflow
 
-Version 1.2.2 introduces self-awareness and easier maintenance:
+REDHAVEN v1.2.4 separates **Execution** from **Analysis**:
 
-- **Auto-Update Check**: Alerts you if a new framework version is available.
-- **Toolchain Manager**: New menu option to rebuild your environment with fresh tools and signatures.
-- **Documentation Overhaul**: Streamlined guides for faster onboarding.
+### Phase 1: Execution (The Classic Scanner)
+Use the Docker-powered scanner to gather data.
+```bash
+./start.sh
+```
+*Run Mode 80 (Quick Recon) or Mode 81 (Vuln Hunt).*
 
-### ⚡ Key Features
+### Phase 2: Analysis (The AI Elite Analyst)
+Let the AI find the "needle in the haystack" within your results.
+```bash
+./redhaven-chat.py
+```
+*Analyze your findings, find hidden dorks, and plan your manual exploitation.*
 
-- **Smart Caching**: Intelligent dependency checks prevent redundant re-scans (Amass, Subfinder).
-- **Parallel Execution**: Rewrote core engines (SSRF) to use `parallel` for 20x speed gains.
-- **Single-Pass Analysis**: Optimized Intelligence scoring from expensive sequential loops to single-pass `awk` processing.
-- **Subshell Bug Resolution**: Fixed critical bugs in Logic, BOLA, Rate Limit, and OAuth modules.
+---
+
+## ⚡ v1.2.4 Key Features
+
+- **Read-Only Intelligence**: The AI tools (`analyze_target`, `analyze_finding`, `suggest_next_steps`) safely read scan data without environment conflicts.
+- **Performance Fixes**: JS analysis (LinkFinder/JSLuice) optimized to avoid hangs on large targets.
+- **Improved Recon Filtering**: `clean_targets()` in `recon.sh` now aggressively filters garbage URLs and MIME-type leaks.
+- **Elite OSINT**: Shodan/Censys/Google Dorks dynamically linked for one-click discovery.
 
 ---
 
@@ -64,11 +90,9 @@ Educational and authorized bug bounty use only. Respect the target's scope and l
 
 ---
 
-## 🏆 Special Thanks & Acknowledgments
+## 🏆 Acknowledgments
 
-The development of REDHAVEN is supported by a global community of security researchers and developers.
+- **[Nelux1](https://github.com/Nelux1)**: Advanced reconnaissance integration.
+- **The AI Community**: For the advancements in LLM integration.
 
-- **[Nelux1](https://github.com/Nelux1)**: To contributions and advanced reconnaissance integration (thanks Mark for your help!).
-- **[Community Contributors]**: To all the hackers and bug bounty hunters providing feedback and testing on the front lines.
-
-**Ready to find critical vulnerabilities? Launch REDHAVEN v1.2.2 now.**
+**Ready to find critical vulnerabilities? Consult your REDHAVEN AI Analyst now.**

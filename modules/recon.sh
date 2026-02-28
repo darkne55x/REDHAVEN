@@ -406,10 +406,18 @@ clean_targets() {
         return
     fi
     
-    log_step "Removing static files from the attack list..."
+    log_step "Removing static files and garbage URLs..."
     local EXTS="jpg|jpeg|png|svg|gif|webp|ico|woff|woff2|ttf|eot|css|mp4|mp3|flv|avi|wmv|zip|gz|rar|pdf|doc|docx|xls|xlsx"
     
-    grep -vE "\.($EXTS)(\?|$)" "$OUT_DIR/endpoints/alive_urls.txt" > "$OUT_DIR/endpoints/clean_urls.txt" || true
+    # Pass 1: Remove static file extensions
+    grep -vE "\.($EXTS)(\?|$)" "$OUT_DIR/endpoints/alive_urls.txt" > "$OUT_DIR/.temp/tmp_clean.txt" || true
+    
+    # Pass 2: Remove garbage (MIME types, tool errors, invalid chars, incomplete fragments)
+    grep -vE "^text/|^application/|^image/|^video/|^audio/|^multipart/|^font/|^message/|Error:|Usage:|Traceback|python|{|}|<|>|^\.\.|^/\." "$OUT_DIR/.temp/tmp_clean.txt" | \
+    grep -E "^https?://" | sort -u > "$OUT_DIR/endpoints/clean_urls.txt" || true
+    
+    log_stat "Alive URLs (raw)" "$(wc -l < "$OUT_DIR/endpoints/alive_urls.txt" 2>/dev/null || echo 0)"
+    log_stat "Clean URLs (filtered)" "$(wc -l < "$OUT_DIR/endpoints/clean_urls.txt" 2>/dev/null || echo 0)"
     
     log_step "Extracting URLs with parameters (Intelligent Deduplication)..."
     # AQUI ESTA EL CAMBIO: Usamos 'uro' para guardar solo estructuras únicas

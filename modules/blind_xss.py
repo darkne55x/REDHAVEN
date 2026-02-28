@@ -16,7 +16,7 @@ from typing import List, Dict
 BANNER = """
 ╔══════════════════════════════════════════════════════════╗
 ║  BLIND XSS HUNTER - Out-of-Band XSS Detection            ║
-║  Part of REDHAVEN Framework v1.2.2                       ║
+║  Part of REDHAVEN Framework v1.2.4                       ║
 ╚══════════════════════════════════════════════════════════╝
 """
 

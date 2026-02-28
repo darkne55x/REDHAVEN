@@ -14,7 +14,7 @@ from typing import List, Dict, Set
 BANNER = """
 ╔══════════════════════════════════════════════════════════╗
 ║  POSTMESSAGE ANALYZER - DOM XSS & Origin Bypass          ║
-║  Part of REDHAVEN Framework v1.2.2                       ║
+║  Part of REDHAVEN Framework v1.2.4                       ║
 ╚══════════════════════════════════════════════════════════╝
 """
 

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # ============================================================================
-# REDHAVEN v1.2.2 — Offensive Bug Bounty Framework
+# REDHAVEN v1.2.4 — Offensive Bug Bounty Framework
 # Elite Red Team Edition • by darkne55
 # ============================================================================
 
@@ -51,6 +51,7 @@ FLAG_STEALTH=false
 FLAG_WEB_ONLY=false
 FLAG_NO_RECON=false
 FLAG_OSINT=false
+FLAG_AI=false
 CLI_TARGET=""
 CLI_MODE=""
 CLI_THREADS=""
@@ -72,6 +73,7 @@ parse_flags() {
             --web-only)     FLAG_WEB_ONLY=true; shift ;;
             --no-recon)     FLAG_NO_RECON=true; shift ;;
             --osint)        FLAG_OSINT=true; shift ;;
+            --ai)           FLAG_AI=true; shift ;;
             -h|--help)      show_help; exit 0 ;;
             *)              echo -e "${ERROR}[✘] Unknown flag: $1${RESET}"; show_help; exit 1 ;;
         esac
@@ -79,7 +81,7 @@ parse_flags() {
 }
 
 show_help() {
-    echo -e "${BR}${BOLD}REDHAVEN 1.2.1 — Command Reference${RESET}"
+    echo -e "${BR}${BOLD}REDHAVEN 1.2.4 — Command Reference${RESET}"
     echo ""
     echo -e "${W}USAGE:${RESET}"
     echo "  ./start.sh                              # Interactive wizard"
@@ -91,6 +93,7 @@ show_help() {
     echo "  --web-only  Web vulnerabilities only"
     echo "  --no-recon  Skip recon, use existing data"
     echo "  --osint     Enable OSINT intelligence"
+    echo "  --ai        Enable AI Brain (LLM-powered analysis)"
     echo ""
     echo -e "${W}MODES:${RESET}"
     echo "  0-6    Recon          10-17  Secrets & API"
@@ -206,7 +209,7 @@ draw_header() {
 LOGO
     echo -e "${RESET}"
     center "${D}=========================================================${RESET}"
-    center "${LR}[*]${RESET} ${W}v1.2.2${RESET}  ${D}|${RESET}  ${W}Toolchain Update Edition${RESET}  ${D}|${RESET}  ${D}by darkne55${RESET}"
+    center "${LR}[*]${RESET} ${W}v1.2.4${RESET}  ${D}|${RESET}  ${W}AI Analyst Edition${RESET}  ${D}|${RESET}  ${D}by darkne55${RESET}"
     center "${D}Build ${BUILD_ID} // ${OPERATOR}@${HOSTNAME_SYS}${RESET}"
     center "${D}=========================================================${RESET}"
     echo ""
@@ -216,7 +219,7 @@ LOGO
 draw_subheader() {
     clear
     echo ""
-    center "${BR}${BOLD}[*] R E D H A V E N${RESET}  ${D}v1.2.2  //  Toolchain Update Edition${RESET}"
+    center "${BR}${BOLD}[*] R E D H A V E N${RESET}  ${D}v1.2.4  //  AI Analyst Edition${RESET}"
     hline "-"
     echo ""
 }
@@ -514,6 +517,7 @@ echo -e "${RESET}"
     ask_yn "Enable Deep Mode? (SQLi, SSTI, LFI)" "y" && { FLAG_DEEP=true; print_ok "Deep Mode ON"; }
     ask_yn "Include OSINT Intelligence?" "y" && { FLAG_OSINT=true; print_ok "OSINT enabled"; }
     ask_yn "Stealth mode? (rate-limited)" "n" && { FLAG_STEALTH=true; print_ok "Stealth ON"; }
+    ask_yn "Enable AI Brain? (LLM analysis)" "y" && { FLAG_AI=true; print_ok "AI Brain ON 🧠"; }
 
     echo ""
     echo -e "   ${W}Mobile analysis:${RESET}"
@@ -733,6 +737,7 @@ $FLAG_STEALTH  && echo -e "   ${G}▸${RESET} Stealth        ${D}Rate-limited${R
 $FLAG_WEB_ONLY && echo -e "   ${G}▸${RESET} Web Only       ${D}No infra/mobile${RESET}"
 $FLAG_NO_RECON && echo -e "   ${G}▸${RESET} No Recon       ${D}Skip recon${RESET}"
 $FLAG_OSINT    && echo -e "   ${G}▸${RESET} OSINT          ${D}Intelligence module${RESET}"
+$FLAG_AI       && echo -e "   ${G}▸${RESET} AI Brain       ${D}LLM-powered analysis${RESET}"
 [ -n "$APK_FILE" ] && echo -e "   ${G}▸${RESET} APK            ${D}$APK_FILE${RESET}"
 [ -n "$IPA_FILE" ] && echo -e "   ${G}▸${RESET} IPA            ${D}$IPA_FILE${RESET}"
 
@@ -760,6 +765,7 @@ CMD_ARGS=(run --rm -it --shm-size=2g \
   -e "WEB_ONLY=$FLAG_WEB_ONLY" \
   -e "SKIP_RECON=$FLAG_NO_RECON" \
   -e "OSINT_MODE=$FLAG_OSINT" \
+  -e "AI_MODE=$FLAG_AI" \
   -v "$PARENT_DIR":/results \
   -v "$(readlink -f scanner.sh)":/usr/local/bin/scanner \
   -v "$(pwd)/modules":/usr/local/bin/modules \

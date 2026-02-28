@@ -78,16 +78,17 @@ run_secrets_hunter() {
         log_step "LinkFinder: Extracting hidden endpoints from JS..."
         mkdir -p "$OUT_DIR/.temp/linkfinder"
         
-        # Analyze ALL JS files (not just top 20)
-        cat "$OUT_DIR/endpoints/js_targets.txt" | \
-            parallel -j 10 --timeout 60 \
+        # LIMIT: Max 30 JS files, 30s timeout per file, 5 minutes total
+        head -n 30 "$OUT_DIR/endpoints/js_targets.txt" | \
+            timeout 300 parallel -j 5 --timeout 30 \
             "python3 /tools/LinkFinder/linkfinder.py -i {} -o cli 2>/dev/null" \
             >> "$OUT_DIR/endpoints/linkfinder_endpoints.txt" 2>/dev/null || true
         
         # Clean noisy output
         if [ -s "$OUT_DIR/endpoints/linkfinder_endpoints.txt" ]; then
             grep -v "Running against:" "$OUT_DIR/endpoints/linkfinder_endpoints.txt" | \
-                grep -v "Invalid input" | sort -u -o "$OUT_DIR/endpoints/linkfinder_endpoints.txt"
+                grep -v "Invalid input" | grep -v "Usage:" | grep -v "python" | \
+                sort -u -o "$OUT_DIR/endpoints/linkfinder_endpoints.txt"
             
             local lf_count=$(wc -l < "$OUT_DIR/endpoints/linkfinder_endpoints.txt" 2>/dev/null || echo 0)
             log_stat "LinkFinder New Endpoints" "$lf_count"
@@ -103,13 +104,13 @@ run_secrets_hunter() {
     if command -v jsluice >/dev/null 2>&1; then
         log_step "JSLuice: AST-based secret analysis..."
         
-        # Download JS files for local analysis
-        head -n 50 "$OUT_DIR/endpoints/js_targets.txt" | \
-            parallel -j 20 --timeout 30 "wget -q -P $OUT_DIR/.temp/js_download {} 2>/dev/null" || true
+        # Download JS files for local analysis — LIMIT: Max 30 files, 15s each, 3 min total
+        head -n 30 "$OUT_DIR/endpoints/js_targets.txt" | \
+            timeout 180 parallel -j 10 --timeout 15 "wget -q -P $OUT_DIR/.temp/js_download {} 2>/dev/null" || true
         
-        # Run JSLuice secrets + URLs
-        jsluice secrets -R "$OUT_DIR/.temp/js_download" > "$OUT_DIR/secrets/jsluice_secrets.json" 2>/dev/null || true
-        jsluice urls -R "$OUT_DIR/.temp/js_download" > "$OUT_DIR/secrets/jsluice_urls.json" 2>/dev/null || true
+        # Run JSLuice secrets + URLs — with 2 minute total timeout
+        timeout 120 jsluice secrets -R "$OUT_DIR/.temp/js_download" > "$OUT_DIR/secrets/jsluice_secrets.json" 2>/dev/null || true
+        timeout 120 jsluice urls -R "$OUT_DIR/.temp/js_download" > "$OUT_DIR/secrets/jsluice_urls.json" 2>/dev/null || true
         
         if [ -s "$OUT_DIR/secrets/jsluice_secrets.json" ]; then
             jq -r '"[\(.severity // "info")] \(.kind // "unknown") - \(.data // "N/A")"' \

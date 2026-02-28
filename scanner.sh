@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # =======================================================================================
-# REDHAVEN v1.2.2 • Offensive Bug Bounty Framework • Modular Architecture • by darkne55
+# REDHAVEN v1.2.4 • Offensive Bug Bounty Framework • Modular Architecture • by darkne55
 # =======================================================================================
 
 set -euo pipefail
@@ -21,6 +21,7 @@ STEALTH_MODE="${STEALTH_MODE:-false}"
 WEB_ONLY="${WEB_ONLY:-false}"
 SKIP_RECON="${SKIP_RECON:-false}"
 OSINT_MODE="${OSINT_MODE:-false}"
+AI_MODE="${AI_MODE:-false}"
 
 # Override rate limit in stealth mode
 if [ "$STEALTH_MODE" = "true" ]; then
@@ -92,8 +93,8 @@ if [ -z "$TARGET" ]; then
     exit 1
 fi
 
-# ESTRUCTURA DE DIRECTORIOS
-OUT_DIR="/results/$TARGET"
+# ESTRUCTURA DE DIRECTORIOS — Accept env override for non-Docker usage
+OUT_DIR="${OUT_DIR:-/results/$TARGET}"
 mkdir -p "$OUT_DIR/recon" "$OUT_DIR/vulns" "$OUT_DIR/secrets" "$OUT_DIR/endpoints" "$OUT_DIR/reports" "$OUT_DIR/.temp"
 
 # --- LÓGICA DE PROVIDER CONFIG (API KEYS) ---
@@ -265,6 +266,7 @@ case "$MODE" in
         if [ "$WEB_ONLY" = "true" ]; then log_step "FLAG: --web-only (web vulns only)"; fi
         if [ "$SKIP_RECON" = "true" ]; then log_step "FLAG: --no-recon (skipping reconnaissance)"; fi
         if [ "$OSINT_MODE" = "true" ]; then log_step "FLAG: --osint (OSINT intelligence enabled)"; fi
+        if [ "$AI_MODE" = "true" ]; then log_step "FLAG: --ai (AI Brain intelligent analysis enabled)"; fi
         
         # STEP 0: NELUX1 DEEP RECON
         if [ "$SKIP_RECON" != "true" ]; then

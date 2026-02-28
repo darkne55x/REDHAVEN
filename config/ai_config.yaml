@@ -1,0 +1,55 @@
+# ============================================================================
+# REDHAVEN AI — Configuration
+# ============================================================================
+# This file controls the AI Brain layer that enhances RedHaven with
+# intelligent analysis, adaptive exploitation, and narrative reporting.
+
+ai:
+  # Master switch — set to false to disable all AI features
+  enabled: true
+
+  # ─── Provider Configuration ───
+  # Options: ollama | gemini | openai | deepseek
+  provider: "gemini"
+  model: "gemini-2.0-flash"
+
+  # Fallback provider (used if primary fails)
+  fallback_provider: "ollama"
+  fallback_model: "llama3:8b"
+
+  # ─── API Keys (only needed for cloud providers) ───
+  # You can also set these via environment variables:
+  #   REDHAVEN_GEMINI_KEY, REDHAVEN_OPENAI_KEY, REDHAVEN_DEEPSEEK_KEY
+  gemini_api_key: ""
+  openai_api_key: ""
+  deepseek_api_key: ""
+
+  # ─── Ollama Configuration ───
+  ollama:
+    host: "http://localhost:11434"
+    # Recommended models (in order of capability):
+    #   llama3:70b    — Best reasoning, needs 40GB+ VRAM
+    #   llama3:8b     — Good balance, needs 8GB VRAM
+    #   mistral:7b    — Fast, good for parsing
+    #   deepseek-coder:6.7b — Excellent for exploit generation
+
+  # ─── Generation Parameters ───
+  max_tokens: 4096
+  temperature: 0.3        # Low = precise & deterministic
+  top_p: 0.9
+
+  # ─── Behavior ───
+  # Run AI analysis after each phase completes
+  analyze_after_phase: true
+  # Generate narrative report at the end
+  narrative_report: true
+  # Maximum findings to send to LLM per analysis (to control token usage)
+  max_findings_per_prompt: 100
+
+  # ─── Privacy & Security ───
+  # Sanitize target domain/IP before sending to cloud APIs
+  sanitize_targets: true
+  # Only use local models (Ollama), never send data to cloud
+  local_only: false
+  # Log all AI prompts and responses for debugging
+  debug_logging: false

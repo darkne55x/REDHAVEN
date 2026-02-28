@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-REDHAVEN v1.2.2 - CVE Auto-Matching Engine
+REDHAVEN v1.2.4 - CVE Auto-Matching Engine
 Detects technology versions and matches them to known CVEs
 """
 
@@ -256,7 +256,7 @@ def execute_nuclei_cve(templates: List[str], target_urls: List[str], output_file
 
 def main(target_dir: str):
     print(f"{Colors.GREEN}{Colors.BOLD}╔═══════════════════════════════════════════════════════════╗{Colors.RESET}")
-    print(f"{Colors.GREEN}{Colors.BOLD}║       CVE AUTO-MATCHING ENGINE v1.2.2                     ║{Colors.RESET}")
+    print(f"{Colors.GREEN}{Colors.BOLD}║       CVE AUTO-MATCHING ENGINE v1.2.4                     ║{Colors.RESET}")
     print(f"{Colors.GREEN}{Colors.BOLD}╚═══════════════════════════════════════════════════════════╝{Colors.RESET}\n")
     
     base_path = Path(target_dir)

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-REDHAVEN v1.2.2 — OSINT Recon Module
+REDHAVEN v1.2.4 — OSINT Recon Module
 by darkne55
 
 Features:
@@ -33,7 +33,7 @@ except ImportError:
 BANNER = """
 \033[1;31m
 ╔══════════════════════════════════════════════════════╗
-║   REDHAVEN v1.2.2 — OSINT Recon Module               ║
+║   REDHAVEN v1.2.4 — OSINT Recon Module               ║
 ║   by darkne55                                        ║
 ╚══════════════════════════════════════════════════════╝
 \033[0m"""
@@ -76,63 +76,198 @@ def log_finding(severity, msg):
 # 1. GOOGLE DORK GENERATOR
 # ─────────────────────────────────────────────────────────────────────
 def generate_dorks(domain):
-    """Generate targeted Google dork queries for a domain."""
-    dorks = [
-        # Sensitive files
-        f'site:{domain} filetype:env',
-        f'site:{domain} filetype:sql',
-        f'site:{domain} filetype:log',
-        f'site:{domain} filetype:conf',
-        f'site:{domain} filetype:bak',
-        f'site:{domain} filetype:xml',
-        f'site:{domain} filetype:json',
-        f'site:{domain} filetype:yml OR filetype:yaml',
-        # Admin panels
-        f'site:{domain} inurl:admin',
-        f'site:{domain} inurl:login',
-        f'site:{domain} inurl:dashboard',
-        f'site:{domain} inurl:wp-admin',
-        f'site:{domain} inurl:cpanel',
-        # Exposed directories
-        f'site:{domain} intitle:"index of"',
-        f'site:{domain} intitle:"directory listing"',
-        # Credentials / secrets
-        f'site:{domain} intext:"password" filetype:txt',
-        f'site:{domain} intext:"api_key" OR intext:"apikey"',
-        f'site:{domain} intext:"secret_key" OR intext:"client_secret"',
-        f'site:{domain} intext:"BEGIN RSA PRIVATE KEY"',
-        # Error pages (info disclosure)
-        f'site:{domain} intext:"Fatal error" OR intext:"Warning:"',
-        f'site:{domain} intext:"SQL syntax" OR intext:"mysql_fetch"',
-        f'site:{domain} intext:"stack trace" OR intext:"Exception"',
-        # Exposed configs
-        f'site:{domain} inurl:.git',
-        f'site:{domain} inurl:.env',
-        f'site:{domain} inurl:config.json',
-        f'site:{domain} inurl:swagger OR inurl:api-docs',
-        # Cloud
-        f'site:s3.amazonaws.com "{domain}"',
-        f'site:blob.core.windows.net "{domain}"',
-        f'site:storage.googleapis.com "{domain}"',
+    """Generate targeted Google dork queries for a domain, grouped logically.
+    Loads from config/osint_dorks.yaml if available, otherwise uses defaults."""
+    
+    # Strip protocol and path just in case
+    domain = re.sub(r'^https?://', '', domain).split('/')[0]
+    
+    # Deriving the company name (first part of the root domain)
+    parts = domain.split('.')
+    company_name = parts[-2] if len(parts) >= 2 else domain
+
+    # Try to load from YAML config
+    config_paths = [
+        "/config/osint_dorks.yaml",  # Docker path
+        os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "config", "osint_dorks.yaml") # Local path
     ]
+    
+    dorks = None
+    for path in config_paths:
+        if os.path.exists(path):
+            try:
+                import yaml
+                with open(path, 'r') as f:
+                    data = yaml.safe_load(f)
+                    if data and "dorks" in data:
+                        # Replace placeholders
+                        dorks = {}
+                        for category, queries in data["dorks"].items():
+                            dorks[category] = [q.replace("{domain}", domain).replace("{company_name}", company_name) for q in queries]
+                        break
+            except ImportError:
+                log_warn(f"Python 'yaml' package not found. Using default hardcoded dorks.")
+                break # Don't try other paths if yaml is missing
+            except Exception as e:
+                log_warn(f"Failed to load user dorks config {path}: {e}")
+
+    # Fallback if config isn't found
+    if not dorks:
+        dorks = {
+            "1. Archivos Sensibles Agrupados": [
+                f'site:{domain} ext:env | ext:sql | ext:log | ext:conf | ext:bak | ext:inc | ext:ini | ext:sh | ext:bz2',
+                f'site:{domain} ext:xml | ext:json | ext:yml | ext:yaml | ext:properties | ext:csv | ext:db',
+                f'site:{domain} ext:pem | ext:key | ext:cert | ext:crt | ext:pkcs12 | ext:pfx | ext:p12',
+                f'site:{domain} ext:doc | ext:docx | ext:odt | ext:pdf | ext:xls | ext:xlsx | ext:ppt | ext:pptx',
+            ],
+            "2. Credenciales y Secretos": [
+                f'site:{domain} intext:"password" | intext:"API_KEY" | intext:"secret" ext:txt | ext:log | ext:md',
+                f'site:{domain} "BEGIN RSA PRIVATE KEY" | "BEGIN OPENSSH PRIVATE KEY" | "BEGIN PGP PRIVATE KEY BLOCK"',
+                f'site:{domain} intext:"Authorization: Bearer" | intext:"access_token"',
+                f'site:{domain} ext:ovpn intext:"client"',
+                f'site:{domain} "DB_PASSWORD" | "DB_USERNAME" | "amazonaws.com"',
+                f'site:pastebin.com "{domain}" | "password" | "secret"',
+            ],
+            "3. Paneles de Administración (Login/Auth)": [
+                f'site:{domain} inurl:admin | inurl:login | inurl:dashboard | inurl:portal',
+                f'site:{domain} inurl:wp-admin | inurl:cpanel | inurl:auth',
+                f'site:{domain} intitle:"Admin Login" | intitle:"Dashboard" | intitle:"Control Panel"',
+                f'site:{domain} intitle:"gitlab" | intitle:"jenkins" | intitle:"grafana" | intitle:"kibana"',
+            ],
+            "4. Exposición de Infraestructura y Directorios": [
+                f'site:{domain} intitle:"index of" | intitle:"directory listing"',
+                f'site:{domain} inurl:.git/HEAD | inurl:.svn/entries',
+                f'site:{domain} inurl:server-status | inurl:phpinfo',
+                f'site:{domain} "Index of /wp-content/uploads/cv"',
+                f'site:{domain} inurl:swagger-ui | inurl:api-docs',
+            ],
+            "5. Errores y Fugas de Información": [
+                f'site:{domain} "Fatal error" | "Warning:" | "Stack trace:" | "Exception:"',
+                f'site:{domain} "SQL syntax near" | "mysql_fetch" | "ORA-"',
+                f'site:{domain} "Index of /" "parent directory"',
+            ],
+            "6. Terceros (3rd Party / SaaS / Cloud)": [
+                f'site:postman.com "{company_name}" | "{domain}"',
+                f'site:linktr.ee "{company_name}"',
+                f'site:genial.ly "{company_name}"',
+                f'site:trello.com "{company_name}" | "{domain}"',
+                f'site:s3.amazonaws.com "{company_name}" | "{domain}"',
+                f'site:github.com "{domain}" "password" | "db_password"',
+                f'site:atlassian.net "{company_name}"',
+                f'site:bitbucket.org "{company_name}"',
+            ],
+            "7. Redes Sociales y Empleados (Email/Contactos)": [
+                f'site:linkedin.com/in "* @{domain}"',
+                f'site:{domain} "contact" | "email" | "phone"',
+            ],
+            "8. Shodan & Inteligencia Externa": [
+                f'site:shodan.io ssl:"{domain}" | "{company_name}"',
+                f'site:shodan.io "{domain}" http.html:"admin"',
+                f'site:search.censys.io "{domain}"'
+            ]
+        }
     return dorks
+
+def _load_platform_dorks(domain, section_key):
+    """Load a specific dorks section (shodan_dorks, censys_dorks) from YAML config."""
+    domain = re.sub(r'^https?://', '', domain).split('/')[0]
+    parts = domain.split('.')
+    company_name = parts[-2] if len(parts) >= 2 else domain
+
+    config_paths = [
+        "/config/osint_dorks.yaml",
+        os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "config", "osint_dorks.yaml")
+    ]
+    for path in config_paths:
+        if os.path.exists(path):
+            try:
+                import yaml
+                with open(path, 'r') as f:
+                    data = yaml.safe_load(f)
+                    if data and section_key in data:
+                        result = {}
+                        for category, queries in data[section_key].items():
+                            result[category] = [q.replace("{domain}", domain).replace("{company_name}", company_name) for q in queries]
+                        return result
+            except Exception:
+                pass
+    return {}
 
 
 def run_google_dorks(domain, output_dir):
-    """Save dork queries to file for manual use (no scraping)."""
-    log_step("Phase 1: Google Dork Generator...")
-    dorks = generate_dorks(domain)
+    """Save dork queries to file for manual use in markdown format with clickable links.
+    Includes Google, Shodan, and Censys dorks with platform-specific clickable URLs."""
+    log_step("Phase 1: Google Advanced Dorking Arsenal...")
+    dorks_dict = generate_dorks(domain)
+    shodan_dict = _load_platform_dorks(domain, "shodan_dorks")
+    censys_dict = _load_platform_dorks(domain, "censys_dorks")
     
-    dork_file = os.path.join(output_dir, "osint_google_dorks.txt")
-    with open(dork_file, 'w') as f:
-        f.write(f"# REDHAVEN OSINT — Google Dorks for {domain}\n")
-        f.write(f"# Generated: {datetime.now().isoformat()}\n")
-        f.write(f"# Total dorks: {len(dorks)}\n")
-        f.write(f"# Usage: Paste each dork into Google manually or use dorks_hunter\n\n")
-        for dork in dorks:
-            f.write(f"{dork}\n")
+    total_google = sum(len(q) for q in dorks_dict.values())
+    total_shodan = sum(len(q) for q in shodan_dict.values())
+    total_censys = sum(len(q) for q in censys_dict.values())
+    total_all = total_google + total_shodan + total_censys
     
-    log_success(f"Generated {len(dorks)} Google dorks → osint_google_dorks.txt")
+    txt_file = os.path.join(output_dir, "osint_google_dorks.txt")
+    md_file = os.path.join(output_dir, "osint_google_dorks.md")
+    
+    with open(txt_file, 'w') as txt, open(md_file, 'w') as md:
+        txt.write(f"# REDHAVEN OSINT — Dork Arsenal for {domain}\n")
+        txt.write(f"# Generated: {datetime.now().isoformat()}\n")
+        txt.write(f"# Total dorks: {total_all} (Google: {total_google} | Shodan: {total_shodan} | Censys: {total_censys})\n\n")
+        
+        md.write(f"# 🎯 OSINT Dork Arsenal: `{domain}`\n\n")
+        md.write(f"**Total:** {total_all} dorks — Google: {total_google} | Shodan: {total_shodan} | Censys: {total_censys}\n\n")
+        md.write(f"> Haz clic en los enlaces para abrir la búsqueda directo en cada plataforma.\n\n")
+        
+        # ── Google Dorks ──
+        md.write("---\n# 🔍 Google Dorks\n\n")
+        txt.write("═══ GOOGLE DORKS ═══\n\n")
+        for category, queries in dorks_dict.items():
+            txt.write(f"### {category} ###\n")
+            md.write(f"## {category}\n")
+            for dork in queries:
+                url_encoded = urllib.parse.quote_plus(dork)
+                url = f"https://www.google.com/search?q={url_encoded}"
+                txt.write(f"{dork}\n")
+                md.write(f"- [ ] [`{dork}`]({url})\n")
+            txt.write("\n")
+            md.write("\n")
+
+        # ── Shodan Dorks ──
+        if shodan_dict:
+            md.write("---\n# 🛰️ Shodan Dorks (Nativos)\n\n")
+            txt.write("═══ SHODAN DORKS ═══\n\n")
+            for category, queries in shodan_dict.items():
+                txt.write(f"### {category} ###\n")
+                md.write(f"## {category}\n")
+                for dork in queries:
+                    url_encoded = urllib.parse.quote_plus(dork)
+                    url = f"https://www.shodan.io/search?query={url_encoded}"
+                    txt.write(f"{dork}\n")
+                    md.write(f"- [ ] [`{dork}`]({url})\n")
+                txt.write("\n")
+                md.write("\n")
+
+        # ── Censys Dorks ──
+        if censys_dict:
+            md.write("---\n# 🔬 Censys Dorks (Nativos)\n\n")
+            txt.write("═══ CENSYS DORKS ═══\n\n")
+            for category, queries in censys_dict.items():
+                txt.write(f"### {category} ###\n")
+                md.write(f"## {category}\n")
+                for dork in queries:
+                    url_encoded = urllib.parse.quote_plus(dork)
+                    url = f"https://search.censys.io/search?resource=hosts&q={url_encoded}"
+                    txt.write(f"{dork}\n")
+                    md.write(f"- [ ] [`{dork}`]({url})\n")
+                txt.write("\n")
+                md.write("\n")
+            
+    log_success(f"Generated {total_all} elite Dorks → osint_google_dorks.md (CLICKABLE!)")
+    if total_shodan:
+        log_success(f"  ├─ {total_shodan} Shodan queries (links directos a shodan.io)")
+    if total_censys:
+        log_success(f"  └─ {total_censys} Censys queries (links directos a search.censys.io)")
     
     # If dorks_hunter is available, run it
     if os.path.exists("/usr/local/bin/dorks_hunter") or _cmd_exists("dorks_hunter"):
@@ -146,7 +281,7 @@ def run_google_dorks(domain, output_dir):
         except Exception:
             log_warn("dorks_hunter failed or timed out.")
     
-    return len(dorks)
+    return total_all
 
 
 # ─────────────────────────────────────────────────────────────────────

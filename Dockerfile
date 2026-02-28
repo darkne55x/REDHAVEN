@@ -131,7 +131,8 @@ RUN wget -q https://github.com/epi052/feroxbuster/releases/latest/download/x86_6
 # 6. Herramientas Python
 RUN pip3 install --no-cache-dir --break-system-packages --ignore-installed \
     requests colorama pyyaml google-genai mobsfscan \
-    pycryptodomex termcolor jsbeautifier urllib3 bs4
+    pycryptodomex termcolor jsbeautifier urllib3 bs4 \
+    openai ollama
 RUN pip3 install --no-cache-dir --break-system-packages uro dnsgen aiohttp websockets
 
 # V2.0: OSINT + Server-Side Injection Engine dependencies
@@ -236,7 +237,11 @@ RUN ln -sf /usr/local/bin/modules/correlator.py /usr/local/bin/correlator && \
     ln -sf /usr/local/bin/modules/cve_matcher.py /usr/local/bin/cve_matcher && \
     ln -sf /usr/local/bin/modules/s3_bruteforce.py /usr/local/bin/s3_bruteforce && \
     ln -sf /usr/local/bin/modules/osint_recon.py /usr/local/bin/osint_recon && \
-    ln -sf /usr/local/bin/modules/smart_secrets.py /usr/local/bin/smart_secrets
+    ln -sf /usr/local/bin/modules/smart_secrets.py /usr/local/bin/smart_secrets && \
+    ln -sf /usr/local/bin/modules/ai_brain_cli.py /usr/local/bin/ai_brain_cli
+
+# AI Brain: Copy config
+COPY config/ai_config.yaml /config/ai_config.yaml
 
 RUN chmod +x /usr/local/bin/scanner /usr/local/bin/modules/*.sh /usr/local/bin/modules/*.py
 
